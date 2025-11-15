@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "593625609255",
+    "project_id": "ag-2548f",
+    "storage_bucket": "ag-2548f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:593625609255:android:a44c59a819d96cdd338a02",
+        "android_client_info": {
+          "package_name": "com.example.agsecure"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKYVHmCKdrtl4U-hZxShhZ4xzlezq_vFo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
