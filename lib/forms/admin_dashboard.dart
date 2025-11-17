@@ -41,18 +41,18 @@ class _AdminDashboardState extends State<AdminDashboard> {
 
                 int male = 0, female = 0, other = 0;
 
+                // Count genders
                 for (var doc in snapshot.data!.docs) {
                   final data = doc.data() as Map<String, dynamic>;
                   final gender = (data['gender'] ?? 'other')
                       .toString()
                       .toLowerCase();
-                  if (gender == 'male') {
+                  if (gender == 'male')
                     male++;
-                  } else if (gender == 'female') {
+                  else if (gender == 'female')
                     female++;
-                  } else {
+                  else
                     other++;
-                  }
                 }
 
                 int total = male + female + other;
@@ -70,7 +70,6 @@ class _AdminDashboardState extends State<AdminDashboard> {
                       Colors.blue,
                       Icons.male,
                     ),
-                    const SizedBox(width: 8),
                     buildAnalyticsCard(
                       "Female",
                       female,
@@ -78,7 +77,6 @@ class _AdminDashboardState extends State<AdminDashboard> {
                       Colors.pink,
                       Icons.female,
                     ),
-                    const SizedBox(width: 8),
                     buildAnalyticsCard(
                       "Other",
                       other,
@@ -87,49 +85,6 @@ class _AdminDashboardState extends State<AdminDashboard> {
                       Icons.transgender,
                     ),
                   ],
-                );
-              },
-            ),
-
-            const SizedBox(height: 24),
-
-            // Daily Login Analytics
-            const Text(
-              "Daily Login Analytics",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 12),
-            StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('login_history')
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                int loginsToday = 0;
-                if (snapshot.hasData) {
-                  for (var doc in snapshot.data!.docs) {
-                    final data = doc.data() as Map<String, dynamic>;
-                    if (data['createdAt'] != null) {
-                      Timestamp ts = data['createdAt'] as Timestamp;
-                      DateTime loginDate = ts.toDate();
-                      if (loginDate.year == today.year &&
-                          loginDate.month == today.month &&
-                          loginDate.day == today.day) {
-                        loginsToday++;
-                      }
-                    }
-                  }
-                }
-
-                return buildAnalyticsCard(
-                  "Logins Today",
-                  loginsToday,
-                  1.0,
-                  Colors.orange,
-                  Icons.login,
                 );
               },
             ),
