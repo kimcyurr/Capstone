@@ -129,482 +129,574 @@
 //     );
 //   }
 // }
+//skjfsijkfnsfnsf
+// import 'package:flutter/material.dart';
+
+// void main() {
+//   runApp(const AgSecureApp());
+// }
+
+// class AgSecureApp extends StatelessWidget {
+//   const AgSecureApp({Key? key}) : super(key: key);
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       title: 'AgSecure Learning',
+//       theme: ThemeData(
+//         primarySwatch: Colors.green,
+//         scaffoldBackgroundColor: Colors.grey[100],
+//       ),
+//       home: const HomePage(),
+//       debugShowCheckedModeBanner: false,
+//     );
+//   }
+// }
+
+// class LearnPage extends StatelessWidget {
+//   const LearnPage({Key? key}) : super(key: key);
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: const Color(0xFFF8F5E8),
+//       appBar: AppBar(
+//         backgroundColor: const Color(0xFFF8F5E8),
+//         elevation: 0,
+//         title: const Text(
+//           'Learn',
+//           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+//         ),
+//         iconTheme: const IconThemeData(color: Colors.black),
+//       ),
+//       body: Padding(
+//         padding: const EdgeInsets.all(16.0),
+//         child: Column(
+//           children: [
+//             // Search Bar
+//             Container(
+//               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+//               decoration: BoxDecoration(
+//                 color: Colors.white,
+//                 borderRadius: BorderRadius.circular(12),
+//                 boxShadow: [
+//                   BoxShadow(
+//                     color: Colors.black.withOpacity(0.05),
+//                     blurRadius: 4,
+//                     offset: const Offset(0, 2),
+//                   ),
+//                 ],
+//               ),
+//               child: const Row(
+//                 children: [
+//                   Icon(Icons.search, color: Colors.black54),
+//                   SizedBox(width: 8),
+//                   Expanded(
+//                     child: TextField(
+//                       decoration: InputDecoration(
+//                         hintText: 'Search',
+//                         border: InputBorder.none,
+//                       ),
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//             const SizedBox(height: 20),
+
+//             // List of Cards
+//             Expanded(
+//               child: ListView(
+//                 children: [
+//                   _buildLearnCard(
+//                     image:
+//                         'https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Hong_Kong_Okra_Aug_25_2012.JPG/1200px-Hong_Kong_Okra_Aug_25_2012.JPG',
+//                     title: 'Okra',
+//                     description:
+//                         'Okra is a green, finger-shaped vegetable known for its edible pods that contain small seeds and a sticky juice used to thicken soups and stews.',
+//                   ),
+//                   _buildLearnCard(
+//                     image:
+//                         'https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=500',
+//                     title: 'Sibuyas',
+//                     description:
+//                         'Carl Linnaeus, from Latin cepa), also known as the bulb onion or common onion, is a vegetable that is the most widely cultivated species of the genus Allium.',
+//                   ),
+//                   _buildLearnCard(
+//                     image:
+//                         'https://images.unsplash.com/photo-1599931468087-4ac7c8ac70d1?w=500',
+//                     title: 'Upo',
+//                     description:
+//                         'Calabash, or bottle gourd, is a tropical vine fruit.',
+//                   ),
+//                   _buildLearnCard(
+//                     image:
+//                         'https://images.unsplash.com/photo-1599599810769-bcde5a160d32?w=500',
+//                     title: 'Black pepper',
+//                     description:
+//                         'A flowering vine cultivated for its fruit, used as a spice.',
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+
+//   Widget _buildLearnCard({
+//     required String image,
+//     required String title,
+//     required String description,
+//   }) {
+//     return Container(
+//       margin: const EdgeInsets.only(bottom: 16),
+//       decoration: BoxDecoration(
+//         color: const Color(0xFFE9E7D0),
+//         borderRadius: BorderRadius.circular(12),
+//       ),
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           ClipRRect(
+//             borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+//             child: Image.network(
+//               image,
+//               height: 150,
+//               width: double.infinity,
+//               fit: BoxFit.cover,
+//               errorBuilder: (context, error, stackTrace) {
+//                 return Container(
+//                   height: 150,
+//                   color: Colors.grey[300],
+//                   child: const Icon(Icons.image, size: 50, color: Colors.grey),
+//                 );
+//               },
+//             ),
+//           ),
+//           Padding(
+//             padding: const EdgeInsets.symmetric(
+//               horizontal: 12.0,
+//               vertical: 8.0,
+//             ),
+//             child: Column(
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 Text(
+//                   title,
+//                   style: const TextStyle(
+//                     fontWeight: FontWeight.bold,
+//                     fontSize: 16,
+//                   ),
+//                 ),
+//                 const SizedBox(height: 4),
+//                 Text(
+//                   description,
+//                   style: const TextStyle(fontSize: 13, color: Colors.black54),
+//                 ),
+//               ],
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+
+// class HomePage extends StatelessWidget {
+//   const HomePage({Key? key}) : super(key: key);
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: Colors.white,
+//       body: SafeArea(
+//         child: Column(
+//           children: [
+//             // Header Section
+//             Container(
+//               decoration: const BoxDecoration(
+//                 color: Color(0xFF2D7A4F),
+//                 borderRadius: BorderRadius.only(
+//                   bottomLeft: Radius.circular(30),
+//                   bottomRight: Radius.circular(30),
+//                 ),
+//               ),
+//               padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
+//               child: Column(
+//                 children: [
+//                   // Welcome Text
+//                   const Text(
+//                     'Welcome to AgSecure Learning! 🌾',
+//                     style: TextStyle(
+//                       color: Colors.white,
+//                       fontSize: 20,
+//                       fontWeight: FontWeight.w500,
+//                     ),
+//                   ),
+//                   const SizedBox(height: 20),
+//                   // Search Bar
+//                   Container(
+//                     decoration: BoxDecoration(
+//                       color: const Color(0xFF1E6B3F),
+//                       borderRadius: BorderRadius.circular(15),
+//                     ),
+//                     padding: const EdgeInsets.symmetric(
+//                       horizontal: 15,
+//                       vertical: 4,
+//                     ),
+//                     child: const TextField(
+//                       style: TextStyle(color: Colors.white),
+//                       decoration: InputDecoration(
+//                         hintText: 'Search here...',
+//                         hintStyle: TextStyle(color: Colors.white70),
+//                         border: InputBorder.none,
+//                         icon: Icon(Icons.search, color: Colors.white70),
+//                       ),
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+
+//             // Category Buttons
+//             Padding(
+//               padding: const EdgeInsets.all(20),
+//               child: Row(
+//                 children: [
+//                   Expanded(
+//                     child: CategoryButton(
+//                       label: 'Fruits',
+//                       icon: '🍊',
+//                       color: const Color(0xFFD4964D),
+//                       onTap: () {},
+//                     ),
+//                   ),
+//                   const SizedBox(width: 15),
+//                   Expanded(
+//                     child: CategoryButton(
+//                       label: 'Vegetables',
+//                       icon: '🥬',
+//                       color: const Color(0xFF2D7A4F),
+//                       onTap: () {
+//                         Navigator.push(
+//                           context,
+//                           MaterialPageRoute(
+//                             builder: (context) => const LearnPage(),
+//                           ),
+//                         );
+//                       },
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+
+//             // All Link
+//             Padding(
+//               padding: const EdgeInsets.symmetric(horizontal: 20),
+//               child: Align(
+//                 alignment: Alignment.centerRight,
+//                 child: TextButton(
+//                   onPressed: () {},
+//                   child: const Text(
+//                     'All',
+//                     style: TextStyle(
+//                       color: Color(0xFF2D7A4F),
+//                       fontWeight: FontWeight.bold,
+//                       fontSize: 14,
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//             ),
+
+//             // Items List
+//             Expanded(
+//               child: Container(
+//                 color: Colors.white,
+//                 child: ListView(
+//                   padding: const EdgeInsets.symmetric(horizontal: 20),
+//                   children: [
+//                     ItemCard(
+//                       image:
+//                           'https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Hong_Kong_Okra_Aug_25_2012.JPG/1200px-Hong_Kong_Okra_Aug_25_2012.JPG',
+//                       title: 'Okra',
+//                       description:
+//                           "Okra, or lady's finger, is a green pod vegetable used to thicken soups and stews.",
+//                     ),
+//                     ItemCard(
+//                       image:
+//                           'https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=500',
+//                       title: 'Sibuyas',
+//                       description:
+//                           'The onion is a commonly grown bulb vegetable from the Allium genus.',
+//                     ),
+//                     ItemCard(
+//                       image:
+//                           'https://images.unsplash.com/photo-1599931468087-4ac7c8ac70d1?w=500',
+//                       title: 'Upo',
+//                       description:
+//                           'Calabash, or bottle gourd, is a tropical vine fruit.',
+//                     ),
+//                     ItemCard(
+//                       image:
+//                           'https://images.unsplash.com/photo-1599599810769-bcde5a160d32?w=500',
+//                       title: 'Black pepper',
+//                       description:
+//                           'A flowering vine cultivated for its fruit, used as a spice.',
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//       bottomNavigationBar: BottomNavigationBar(
+//         type: BottomNavigationBarType.fixed,
+//         currentIndex: 1,
+//         selectedItemColor: const Color(0xFF2D7A4F),
+//         unselectedItemColor: Colors.grey,
+//         backgroundColor: Colors.white,
+//         elevation: 8,
+//         onTap: (index) {
+//           if (index == 1) {
+//             Navigator.push(
+//               context,
+//               MaterialPageRoute(builder: (context) => const LearnPage()),
+//             );
+//           }
+//         },
+//         items: const [
+//           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+//           BottomNavigationBarItem(icon: Icon(Icons.menu_book), label: 'Learn'),
+//           BottomNavigationBarItem(
+//             icon: Icon(Icons.qr_code_scanner),
+//             label: 'Scan',
+//           ),
+//           BottomNavigationBarItem(
+//             icon: Icon(Icons.calculate),
+//             label: 'Calculate',
+//           ),
+//           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+//         ],
+//       ),
+//     );
+//   }
+// }
+
+// class CategoryButton extends StatelessWidget {
+//   final String label;
+//   final String icon;
+//   final Color color;
+//   final VoidCallback onTap;
+
+//   const CategoryButton({
+//     Key? key,
+//     required this.label,
+//     required this.icon,
+//     required this.color,
+//     required this.onTap,
+//   }) : super(key: key);
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return InkWell(
+//       onTap: onTap,
+//       borderRadius: BorderRadius.circular(20),
+//       child: Container(
+//         padding: const EdgeInsets.symmetric(vertical: 20),
+//         decoration: BoxDecoration(
+//           color: color,
+//           borderRadius: BorderRadius.circular(20),
+//         ),
+//         child: Column(
+//           children: [
+//             Text(icon, style: const TextStyle(fontSize: 35)),
+//             const SizedBox(height: 8),
+//             Text(
+//               label,
+//               style: const TextStyle(
+//                 color: Colors.white,
+//                 fontWeight: FontWeight.bold,
+//                 fontSize: 16,
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+// class ItemCard extends StatelessWidget {
+//   final String image;
+//   final String title;
+//   final String description;
+
+//   const ItemCard({
+//     Key? key,
+//     required this.image,
+//     required this.title,
+//     required this.description,
+//   }) : super(key: key);
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       margin: const EdgeInsets.only(bottom: 15),
+//       padding: const EdgeInsets.all(12),
+//       decoration: BoxDecoration(
+//         color: Colors.white,
+//         borderRadius: BorderRadius.circular(15),
+//         border: Border.all(color: Colors.grey.shade200, width: 1),
+//       ),
+//       child: Row(
+//         children: [
+//           // Image
+//           ClipRRect(
+//             borderRadius: BorderRadius.circular(10),
+//             child: Image.network(
+//               image,
+//               width: 85,
+//               height: 75,
+//               fit: BoxFit.cover,
+//               errorBuilder: (context, error, stackTrace) {
+//                 return Container(
+//                   width: 85,
+//                   height: 75,
+//                   decoration: BoxDecoration(
+//                     color: Colors.grey[300],
+//                     borderRadius: BorderRadius.circular(10),
+//                   ),
+//                   child: const Icon(Icons.image, color: Colors.grey),
+//                 );
+//               },
+//             ),
+//           ),
+//           const SizedBox(width: 15),
+//           // Text Content
+//           Expanded(
+//             child: Column(
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 Text(
+//                   title,
+//                   style: const TextStyle(
+//                     fontWeight: FontWeight.bold,
+//                     fontSize: 16,
+//                     color: Colors.black,
+//                   ),
+//                 ),
+//                 const SizedBox(height: 5),
+//                 Text(
+//                   description,
+//                   style: TextStyle(
+//                     color: Colors.grey[700],
+//                     fontSize: 12,
+//                     height: 1.3,
+//                   ),
+//                   maxLines: 3,
+//                   overflow: TextOverflow.ellipsis,
+//                 ),
+//               ],
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
 
 import 'package:flutter/material.dart';
+import 'mongo_service.dart';
 
-void main() {
-  runApp(const AgSecureApp());
-}
-
-class AgSecureApp extends StatelessWidget {
-  const AgSecureApp({Key? key}) : super(key: key);
+class LearnPage extends StatefulWidget {
+  const LearnPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'AgSecure Learning',
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-        scaffoldBackgroundColor: Colors.grey[100],
-      ),
-      home: const HomePage(),
-      debugShowCheckedModeBanner: false,
-    );
-  }
+  State<LearnPage> createState() => _LearnPageState();
 }
 
-class LearnPage extends StatelessWidget {
-  const LearnPage({Key? key}) : super(key: key);
+class _LearnPageState extends State<LearnPage> {
+  List<Map<String, dynamic>> lessons = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchLessons();
+  }
+
+  // Fetch lessons from MongoDB
+  Future<void> fetchLessons() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      final data = await MongoService.getLessons();
+      setState(() {
+        lessons = data;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      debugPrint('Error fetching lessons: $e');
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to fetch lessons: $e')));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F5E8),
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF8F5E8),
-        elevation: 0,
-        title: const Text(
-          'Learn',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-        ),
-        iconTheme: const IconThemeData(color: Colors.black),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            // Search Bar
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: const Row(
-                children: [
-                  Icon(Icons.search, color: Colors.black54),
-                  SizedBox(width: 8),
-                  Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Search',
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // List of Cards
-            Expanded(
-              child: ListView(
-                children: [
-                  _buildLearnCard(
-                    image:
-                        'https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Hong_Kong_Okra_Aug_25_2012.JPG/1200px-Hong_Kong_Okra_Aug_25_2012.JPG',
-                    title: 'Okra',
-                    description:
-                        'Okra is a green, finger-shaped vegetable known for its edible pods that contain small seeds and a sticky juice used to thicken soups and stews.',
-                  ),
-                  _buildLearnCard(
-                    image:
-                        'https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=500',
-                    title: 'Sibuyas',
-                    description:
-                        'Carl Linnaeus, from Latin cepa), also known as the bulb onion or common onion, is a vegetable that is the most widely cultivated species of the genus Allium.',
-                  ),
-                  _buildLearnCard(
-                    image:
-                        'https://images.unsplash.com/photo-1599931468087-4ac7c8ac70d1?w=500',
-                    title: 'Upo',
-                    description:
-                        'Calabash, or bottle gourd, is a tropical vine fruit.',
-                  ),
-                  _buildLearnCard(
-                    image:
-                        'https://images.unsplash.com/photo-1599599810769-bcde5a160d32?w=500',
-                    title: 'Black pepper',
-                    description:
-                        'A flowering vine cultivated for its fruit, used as a spice.',
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLearnCard({
-    required String image,
-    required String title,
-    required String description,
-  }) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: const Color(0xFFE9E7D0),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-            child: Image.network(
-              image,
-              height: 150,
-              width: double.infinity,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  height: 150,
-                  color: Colors.grey[300],
-                  child: const Icon(Icons.image, size: 50, color: Colors.grey),
-                );
-              },
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 12.0,
-              vertical: 8.0,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  description,
-                  style: const TextStyle(fontSize: 13, color: Colors.black54),
-                ),
-              ],
-            ),
+        title: const Text('Learning Page'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: fetchLessons, // Refresh lessons from MongoDB
+            tooltip: 'Refresh',
           ),
         ],
       ),
-    );
-  }
-}
-
-class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header Section
-            Container(
-              decoration: const BoxDecoration(
-                color: Color(0xFF2D7A4F),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(30),
-                  bottomRight: Radius.circular(30),
-                ),
-              ),
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
-              child: Column(
-                children: [
-                  // Welcome Text
-                  const Text(
-                    'Welcome to AgSecure Learning! 🌾',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
-                    ),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : lessons.isEmpty
+          ? const Center(child: Text('No lessons found'))
+          : ListView.builder(
+              itemCount: lessons.length,
+              itemBuilder: (context, index) {
+                final lesson = lessons[index];
+                return Card(
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
                   ),
-                  const SizedBox(height: 20),
-                  // Search Bar
-                  Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF1E6B3F),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 15,
-                      vertical: 4,
-                    ),
-                    child: const TextField(
-                      style: TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        hintText: 'Search here...',
-                        hintStyle: TextStyle(color: Colors.white70),
-                        border: InputBorder.none,
-                        icon: Icon(Icons.search, color: Colors.white70),
-                      ),
-                    ),
+                  child: ListTile(
+                    title: Text(lesson['title'] ?? 'No Title'),
+                    subtitle: Text(lesson['description'] ?? ''),
                   ),
-                ],
-              ),
+                );
+              },
             ),
-
-            // Category Buttons
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: CategoryButton(
-                      label: 'Fruits',
-                      icon: '🍊',
-                      color: const Color(0xFFD4964D),
-                      onTap: () {},
-                    ),
-                  ),
-                  const SizedBox(width: 15),
-                  Expanded(
-                    child: CategoryButton(
-                      label: 'Vegetables',
-                      icon: '🥬',
-                      color: const Color(0xFF2D7A4F),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const LearnPage(),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // All Link
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () {},
-                  child: const Text(
-                    'All',
-                    style: TextStyle(
-                      color: Color(0xFF2D7A4F),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
-            // Items List
-            Expanded(
-              child: Container(
-                color: Colors.white,
-                child: ListView(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  children: [
-                    ItemCard(
-                      image:
-                          'https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Hong_Kong_Okra_Aug_25_2012.JPG/1200px-Hong_Kong_Okra_Aug_25_2012.JPG',
-                      title: 'Okra',
-                      description:
-                          "Okra, or lady's finger, is a green pod vegetable used to thicken soups and stews.",
-                    ),
-                    ItemCard(
-                      image:
-                          'https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=500',
-                      title: 'Sibuyas',
-                      description:
-                          'The onion is a commonly grown bulb vegetable from the Allium genus.',
-                    ),
-                    ItemCard(
-                      image:
-                          'https://images.unsplash.com/photo-1599931468087-4ac7c8ac70d1?w=500',
-                      title: 'Upo',
-                      description:
-                          'Calabash, or bottle gourd, is a tropical vine fruit.',
-                    ),
-                    ItemCard(
-                      image:
-                          'https://images.unsplash.com/photo-1599599810769-bcde5a160d32?w=500',
-                      title: 'Black pepper',
-                      description:
-                          'A flowering vine cultivated for its fruit, used as a spice.',
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        currentIndex: 1,
-        selectedItemColor: const Color(0xFF2D7A4F),
-        unselectedItemColor: Colors.grey,
-        backgroundColor: Colors.white,
-        elevation: 8,
-        onTap: (index) {
-          if (index == 1) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const LearnPage()),
-            );
-          }
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          // Example: Add a new lesson (optional)
+          await MongoService.addagescuredb(
+            'New Lesson',
+            'This lesson was added from the app.',
+          );
+          fetchLessons(); // Refresh after adding
         },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.menu_book), label: 'Learn'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.qr_code_scanner),
-            label: 'Scan',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calculate),
-            label: 'Calculate',
-          ),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-        ],
-      ),
-    );
-  }
-}
-
-class CategoryButton extends StatelessWidget {
-  final String label;
-  final String icon;
-  final Color color;
-  final VoidCallback onTap;
-
-  const CategoryButton({
-    Key? key,
-    required this.label,
-    required this.icon,
-    required this.color,
-    required this.onTap,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Column(
-          children: [
-            Text(icon, style: const TextStyle(fontSize: 35)),
-            const SizedBox(height: 8),
-            Text(
-              label,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class ItemCard extends StatelessWidget {
-  final String image;
-  final String title;
-  final String description;
-
-  const ItemCard({
-    Key? key,
-    required this.image,
-    required this.title,
-    required this.description,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 15),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: Colors.grey.shade200, width: 1),
-      ),
-      child: Row(
-        children: [
-          // Image
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: Image.network(
-              image,
-              width: 85,
-              height: 75,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  width: 85,
-                  height: 75,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Icon(Icons.image, color: Colors.grey),
-                );
-              },
-            ),
-          ),
-          const SizedBox(width: 15),
-          // Text Content
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: Colors.black,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  description,
-                  style: TextStyle(
-                    color: Colors.grey[700],
-                    fontSize: 12,
-                    height: 1.3,
-                  ),
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-        ],
+        child: const Icon(Icons.add),
+        tooltip: 'Add Lesson',
       ),
     );
   }
