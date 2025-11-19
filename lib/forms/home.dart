@@ -1,291 +1,9 @@
-// //
-// import 'dart:convert';
-// import 'package:flutter/material.dart';
-// import 'package:http/http.dart' as http;
-// import 'package:cloud_firestore/cloud_firestore.dart';
-
-// class HomePage extends StatefulWidget {
-//   final String userName; // 👈 username from Firestore
-//   const HomePage({super.key, required this.userName});
-
-//   @override
-//   State<HomePage> createState() => _HomePageState();
-// }
-
-// class _HomePageState extends State<HomePage> {
-//   String cityName = "Oroquieta City";
-//   String weatherDescription = "";
-//   double temperature = 0;
-//   bool isLoadingWeather = true;
-
-//   final TextEditingController searchController = TextEditingController();
-//   String searchQuery = "";
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     fetchWeather();
-//   }
-
-//   Future<void> fetchWeather() async {
-//     const apiKey = "a7bb72460433159aee012cbda57cdfd8"; // Replace with your key
-//     final url = Uri.parse(
-//       "https://api.openweathermap.org/data/2.5/weather?q=$cityName&appid=$apiKey&units=metric",
-//     );
-
-//     try {
-//       final response = await http.get(url);
-//       if (response.statusCode == 200) {
-//         final data = json.decode(response.body);
-//         setState(() {
-//           temperature = data['main']['temp'];
-//           weatherDescription = data['weather'][0]['description'] ?? "Unknown";
-//           isLoadingWeather = false;
-//         });
-//       } else {
-//         setState(() => isLoadingWeather = false);
-//         debugPrint('Weather API error: ${response.statusCode}');
-//       }
-//     } catch (e) {
-//       setState(() => isLoadingWeather = false);
-//       debugPrint("Weather fetch error: $e");
-//     }
-//   }
-
-//   Stream<QuerySnapshot> getTutorials() {
-//     return FirebaseFirestore.instance.collection('tutorials').snapshots();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: const Color(0xFFF8F5E8),
-//       body: SafeArea(
-//         child: SingleChildScrollView(
-//           padding: const EdgeInsets.all(16),
-//           child: Column(
-//             crossAxisAlignment: CrossAxisAlignment.start,
-//             children: [
-//               // Greeting Section — now uses username!
-//               Text(
-//                 "Welcome, ${widget.userName}!",
-//                 style: const TextStyle(
-//                   fontSize: 22,
-//                   fontWeight: FontWeight.bold,
-//                   color: Color(0xFF2D5F2E),
-//                 ),
-//               ),
-//               const SizedBox(height: 5),
-//               Text(
-//                 "${DateTime.now().toLocal().toString().split(' ')[0]}",
-//                 style: const TextStyle(color: Colors.black54),
-//               ),
-//               const SizedBox(height: 20),
-
-//               // Search Bar
-//               TextField(
-//                 controller: searchController,
-//                 decoration: InputDecoration(
-//                   hintText: "Search here...",
-//                   prefixIcon: const Icon(Icons.search),
-//                   border: OutlineInputBorder(
-//                     borderRadius: BorderRadius.circular(20),
-//                   ),
-//                   filled: true,
-//                   fillColor: Colors.white,
-//                 ),
-//                 onChanged: (value) => setState(() => searchQuery = value),
-//               ),
-
-//               const SizedBox(height: 20),
-
-//               // Weather Card
-//               Container(
-//                 padding: const EdgeInsets.all(16),
-//                 decoration: BoxDecoration(
-//                   color: Colors.white,
-//                   borderRadius: BorderRadius.circular(20),
-//                   boxShadow: [
-//                     BoxShadow(
-//                       color: Colors.black.withOpacity(0.1),
-//                       blurRadius: 6,
-//                       offset: const Offset(0, 3),
-//                     ),
-//                   ],
-//                 ),
-//                 child: isLoadingWeather
-//                     ? const Center(child: CircularProgressIndicator())
-//                     : Row(
-//                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                         children: [
-//                           Column(
-//                             crossAxisAlignment: CrossAxisAlignment.start,
-//                             children: [
-//                               Text(
-//                                 cityName,
-//                                 style: const TextStyle(
-//                                   fontSize: 18,
-//                                   fontWeight: FontWeight.bold,
-//                                   color: Color(0xFF2D5F2E),
-//                                 ),
-//                               ),
-//                               const SizedBox(height: 6),
-//                               Text(
-//                                 "${temperature.toStringAsFixed(1)}°C | ${weatherDescription.isNotEmpty ? '${weatherDescription[0].toUpperCase()}${weatherDescription.substring(1)}' : 'No data'}",
-//                                 style: const TextStyle(fontSize: 16),
-//                               ),
-//                             ],
-//                           ),
-//                           const Icon(
-//                             Icons.cloud,
-//                             color: Colors.blueAccent,
-//                             size: 50,
-//                           ),
-//                         ],
-//                       ),
-//               ),
-
-//               const SizedBox(height: 25),
-
-//               // Tutorial Header
-//               Row(
-//                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                 children: const [
-//                   Text(
-//                     "Tutorial",
-//                     style: TextStyle(
-//                       fontSize: 18,
-//                       fontWeight: FontWeight.bold,
-//                       color: Colors.black87,
-//                     ),
-//                   ),
-//                   Text(
-//                     "View all",
-//                     style: TextStyle(
-//                       color: Colors.green,
-//                       fontWeight: FontWeight.w500,
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//               const SizedBox(height: 10),
-
-//               // Firestore Tutorials
-//               StreamBuilder<QuerySnapshot>(
-//                 stream: getTutorials(),
-//                 builder: (context, snapshot) {
-//                   if (snapshot.connectionState == ConnectionState.waiting) {
-//                     return const Center(child: CircularProgressIndicator());
-//                   }
-
-//                   if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-//                     return const Center(child: Text("No tutorials available."));
-//                   }
-
-//                   final docs = snapshot.data!.docs.where((doc) {
-//                     final title = doc['title'].toString().toLowerCase();
-//                     return title.contains(searchQuery.toLowerCase());
-//                   }).toList();
-
-//                   if (docs.isEmpty) {
-//                     return const Center(child: Text("No results found."));
-//                   }
-
-//                   return GridView.builder(
-//                     physics: const NeverScrollableScrollPhysics(),
-//                     shrinkWrap: true,
-//                     itemCount: docs.length,
-//                     gridDelegate:
-//                         const SliverGridDelegateWithFixedCrossAxisCount(
-//                           crossAxisCount: 2,
-//                           mainAxisSpacing: 10,
-//                           crossAxisSpacing: 10,
-//                           childAspectRatio: 0.9,
-//                         ),
-//                     itemBuilder: (context, index) {
-//                       final data =
-//                           docs[index].data() as Map<String, dynamic>? ?? {};
-//                       final imageUrl = data['image'] ?? '';
-//                       final title = data['title'] ?? 'Untitled';
-//                       final desc = data['description'] ?? '';
-
-//                       return Container(
-//                         decoration: BoxDecoration(
-//                           color: Colors.white,
-//                           borderRadius: BorderRadius.circular(20),
-//                           boxShadow: [
-//                             BoxShadow(
-//                               color: Colors.black.withOpacity(0.1),
-//                               blurRadius: 4,
-//                               offset: const Offset(0, 3),
-//                             ),
-//                           ],
-//                         ),
-//                         child: Column(
-//                           crossAxisAlignment: CrossAxisAlignment.start,
-//                           children: [
-//                             ClipRRect(
-//                               borderRadius: const BorderRadius.vertical(
-//                                 top: Radius.circular(20),
-//                               ),
-//                               child: Image.network(
-//                                 imageUrl,
-//                                 height: 100,
-//                                 width: double.infinity,
-//                                 fit: BoxFit.cover,
-//                                 errorBuilder: (context, error, stackTrace) =>
-//                                     Container(
-//                                       color: Colors.grey.shade300,
-//                                       height: 100,
-//                                       child: const Center(
-//                                         child: Icon(
-//                                           Icons.broken_image,
-//                                           color: Colors.grey,
-//                                         ),
-//                                       ),
-//                                     ),
-//                               ),
-//                             ),
-//                             Padding(
-//                               padding: const EdgeInsets.all(8.0),
-//                               child: Column(
-//                                 crossAxisAlignment: CrossAxisAlignment.start,
-//                                 children: [
-//                                   Text(
-//                                     title,
-//                                     style: const TextStyle(
-//                                       fontWeight: FontWeight.bold,
-//                                       fontSize: 14,
-//                                     ),
-//                                   ),
-//                                   const SizedBox(height: 4),
-//                                   Text(
-//                                     desc,
-//                                     maxLines: 2,
-//                                     overflow: TextOverflow.ellipsis,
-//                                     style: const TextStyle(fontSize: 12),
-//                                   ),
-//                                 ],
-//                               ),
-//                             ),
-//                           ],
-//                         ),
-//                       );
-//                     },
-//                   );
-//                 },
-//               ),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'profile_page.dart';
 import 'learn_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -305,7 +23,7 @@ class _HomePageState extends State<HomePage> {
   double precipitation = 0;
   bool isLoadingWeather = true;
 
-  int selectedIndex = 0; // Track selected nav button
+  int selectedIndex = 0;
 
   final TextEditingController searchController = TextEditingController();
   String searchQuery = "";
@@ -346,17 +64,22 @@ class _HomePageState extends State<HomePage> {
     return FirebaseFirestore.instance.collection('tutorials').snapshots();
   }
 
-  // Handle navigation tap
   void onNavTap(int index) {
     setState(() {
       selectedIndex = index;
     });
 
-    // Navigate to LearnPage when Learn button is tapped
     if (index == 1) {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const LearnPage()),
+      );
+    }
+
+    if (index == 4) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const ProfilePage()),
       );
     }
   }
@@ -469,6 +192,7 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                   ),
+
                   Positioned(
                     left: 16,
                     right: 16,
@@ -477,7 +201,9 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ],
               ),
+
               const SizedBox(height: 120),
+
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
@@ -505,6 +231,7 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                     const SizedBox(height: 15),
+
                     StreamBuilder<QuerySnapshot>(
                       stream: getTutorials(),
                       builder: (context, snapshot) {
@@ -513,17 +240,20 @@ class _HomePageState extends State<HomePage> {
                             child: CircularProgressIndicator(),
                           );
                         }
+
                         final docs = snapshot.data!.docs.where((doc) {
                           return doc['title'].toString().toLowerCase().contains(
                             searchQuery.toLowerCase(),
                           );
                         }).toList();
+
                         if (docs.isEmpty) {
                           return const Padding(
                             padding: EdgeInsets.all(20),
                             child: Text("No results found."),
                           );
                         }
+
                         return GridView.builder(
                           physics: const NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
@@ -543,6 +273,7 @@ class _HomePageState extends State<HomePage> {
                         );
                       },
                     ),
+
                     const SizedBox(height: 30),
                   ],
                 ),

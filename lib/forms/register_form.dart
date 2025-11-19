@@ -1,5 +1,5 @@
-// import 'dart:convert'; // for utf8
-// import 'package:crypto/crypto.dart'; // for hashing
+// import 'dart:convert';
+// import 'package:crypto/crypto.dart';
 // import 'package:flutter/material.dart';
 // import '../widgets/custom_text_field.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
@@ -25,6 +25,8 @@
 //   bool obscureConfirm = true;
 //   bool agreeToTerms = false;
 //   Gender? selectedGender;
+//   bool showVerificationScreen = false;
+//   User? currentUser;
 
 //   @override
 //   void initState() {
@@ -62,35 +64,30 @@
 //     }
 
 //     try {
-//       // Create user in Firebase Auth
+//       // Step 1: Create user in Firebase Auth
 //       UserCredential userCredential = await FirebaseAuth.instance
 //           .createUserWithEmailAndPassword(
 //             email: emailController.text.trim(),
 //             password: passwordController.text.trim(),
 //           );
 
-//       String uid = userCredential.user!.uid;
+//       currentUser = userCredential.user;
 
-//       // Hash the password
-//       var bytes = utf8.encode(passwordController.text.trim());
-//       var hashedPassword = sha256.convert(bytes).toString();
+//       // Step 2: Send email verification
+//       await currentUser!.sendEmailVerification();
 
-//       // Save user info in Firestore
-//       await FirebaseFirestore.instance.collection('user').doc(uid).set({
-//         'fullName': fullNameController.text.trim(),
-//         'userName': userNameController.text.trim(),
-//         'email': emailController.text.trim(),
-//         'gender': selectedGender.toString().split('.').last,
-//         'password': hashedPassword, // hashed password
-//         'createdAt': FieldValue.serverTimestamp(),
+//       // Step 3: Show verification screen
+//       setState(() {
+//         showVerificationScreen = true;
 //       });
 
-//       ScaffoldMessenger.of(
-//         context,
-//       ).showSnackBar(const SnackBar(content: Text("Registration successful")));
-
-//       // Optionally navigate to login/home page
-//       // Navigator.pushReplacement(...);
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         const SnackBar(
+//           content: Text(
+//             "Verification email sent! Please check your inbox and verify.",
+//           ),
+//         ),
+//       );
 //     } on FirebaseAuthException catch (e) {
 //       String message = '';
 //       if (e.code == 'weak-password') {
@@ -110,8 +107,58 @@
 //     }
 //   }
 
+//   Future<void> checkEmailVerified() async {
+//     await currentUser!.reload();
+//     currentUser = FirebaseAuth.instance.currentUser;
+
+//     if (currentUser!.emailVerified) {
+//       // Hash password before saving
+//       var bytes = utf8.encode(passwordController.text.trim());
+//       var hashedPassword = sha256.convert(bytes).toString();
+
+//       // Save user info to Firestore
+//       await FirebaseFirestore.instance
+//           .collection('users')
+//           .doc(currentUser!.uid)
+//           .set({
+//             'fullName': fullNameController.text.trim(),
+//             'userName': userNameController.text.trim(),
+//             'email': emailController.text.trim(),
+//             'gender': selectedGender.toString().split('.').last,
+//             'password': hashedPassword,
+//             'createdAt': FieldValue.serverTimestamp(),
+//           });
+
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         const SnackBar(
+//           content: Text("Email verified! Account created successfully."),
+//         ),
+//       );
+
+//       // Navigate or reset form
+//       setState(() {
+//         showVerificationScreen = false;
+//       });
+
+//       // Optional: navigate to home page
+//       // Navigator.pushReplacement(...);
+//     } else {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         const SnackBar(
+//           content: Text("Email not verified yet. Please check again."),
+//         ),
+//       );
+//     }
+//   }
+
 //   @override
 //   Widget build(BuildContext context) {
+//     return showVerificationScreen
+//         ? buildEmailVerificationScreen()
+//         : buildRegistrationForm();
+//   }
+
+//   Widget buildRegistrationForm() {
 //     return SingleChildScrollView(
 //       child: Column(
 //         children: [
@@ -227,24 +274,21 @@
 //               ),
 //               Expanded(
 //                 child: RichText(
-//                   text: TextSpan(
-//                     style: const TextStyle(
-//                       fontSize: 11,
-//                       color: Color(0xFF666666),
-//                     ),
+//                   text: const TextSpan(
+//                     style: TextStyle(fontSize: 11, color: Color(0xFF666666)),
 //                     children: [
-//                       const TextSpan(text: 'I agree to '),
+//                       TextSpan(text: 'I agree to '),
 //                       TextSpan(
 //                         text: 'Terms',
-//                         style: const TextStyle(
+//                         style: TextStyle(
 //                           color: Color(0xFF2D5F2E),
 //                           fontWeight: FontWeight.w600,
 //                         ),
 //                       ),
-//                       const TextSpan(text: ' and '),
+//                       TextSpan(text: ' and '),
 //                       TextSpan(
 //                         text: 'Privacy Policy',
-//                         style: const TextStyle(
+//                         style: TextStyle(
 //                           color: Color(0xFF2D5F2E),
 //                           fontWeight: FontWeight.w600,
 //                         ),
@@ -280,6 +324,51 @@
 //       ),
 //     );
 //   }
+
+//   Widget buildEmailVerificationScreen() {
+//     return Center(
+//       child: Padding(
+//         padding: const EdgeInsets.all(24.0),
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: [
+//             const Icon(Icons.email_outlined, size: 100, color: Colors.green),
+//             const SizedBox(height: 20),
+//             const Text(
+//               "Verify Your Email",
+//               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+//             ),
+//             const SizedBox(height: 12),
+//             const Text(
+//               "A verification email has been sent to your inbox. "
+//               "Please verify to activate your account.",
+//               textAlign: TextAlign.center,
+//             ),
+//             const SizedBox(height: 30),
+//             ElevatedButton.icon(
+//               onPressed: checkEmailVerified,
+//               icon: const Icon(Icons.check_circle_outline),
+//               label: const Text("I’ve Verified"),
+//               style: ElevatedButton.styleFrom(
+//                 backgroundColor: const Color(0xFF2D5F2E),
+//                 minimumSize: const Size(double.infinity, 50),
+//               ),
+//             ),
+//             const SizedBox(height: 16),
+//             TextButton(
+//               onPressed: () async {
+//                 await currentUser!.sendEmailVerification();
+//                 ScaffoldMessenger.of(context).showSnackBar(
+//                   const SnackBar(content: Text("Verification email re-sent.")),
+//                 );
+//               },
+//               child: const Text("Resend Verification Email"),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
 // }
 
 import 'dart:convert';
@@ -299,27 +388,36 @@ class RegisterForm extends StatefulWidget {
 enum Gender { male, female, other }
 
 class _RegisterFormState extends State<RegisterForm> {
+  // Controllers
   late TextEditingController fullNameController;
   late TextEditingController userNameController;
   late TextEditingController emailController;
   late TextEditingController passwordController;
   late TextEditingController confirmPasswordController;
 
+  // UI State
   bool obscurePassword = true;
   bool obscureConfirm = true;
   bool agreeToTerms = false;
   Gender? selectedGender;
   bool showVerificationScreen = false;
+
+  // Firebase
   User? currentUser;
+  late CollectionReference usersRef;
 
   @override
   void initState() {
     super.initState();
+    // Initialize controllers
     fullNameController = TextEditingController();
     userNameController = TextEditingController();
     emailController = TextEditingController();
     passwordController = TextEditingController();
     confirmPasswordController = TextEditingController();
+
+    // Initialize Firestore reference safely
+    usersRef = FirebaseFirestore.instance.collection('users');
   }
 
   @override
@@ -332,6 +430,7 @@ class _RegisterFormState extends State<RegisterForm> {
     super.dispose();
   }
 
+  // Register User
   Future<void> registerUser() async {
     if (passwordController.text != confirmPasswordController.text) {
       ScaffoldMessenger.of(
@@ -347,8 +446,17 @@ class _RegisterFormState extends State<RegisterForm> {
       return;
     }
 
+    if (!agreeToTerms) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("You must agree to Terms and Privacy Policy"),
+        ),
+      );
+      return;
+    }
+
     try {
-      // Step 1: Create user in Firebase Auth
+      // 1️⃣ Create user in Firebase Auth
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
             email: emailController.text.trim(),
@@ -357,19 +465,34 @@ class _RegisterFormState extends State<RegisterForm> {
 
       currentUser = userCredential.user;
 
-      // Step 2: Send email verification
+      // 2️⃣ Hash password
+      var bytes = utf8.encode(passwordController.text.trim());
+      var hashedPassword = sha256.convert(bytes).toString();
+
+      // 3️⃣ Prepare Firestore data
+      Map<String, dynamic> userData = {
+        'fullName': fullNameController.text.trim(),
+        'userName': userNameController.text.trim(),
+        'email': emailController.text.trim(),
+        'gender': selectedGender.toString().split('.').last,
+        'password': hashedPassword,
+        'createdAt': FieldValue.serverTimestamp(),
+      };
+
+      // 4️⃣ Save user data to Firestore
+      await usersRef.doc(currentUser!.uid).set(userData);
+
+      // 5️⃣ Send verification email
       await currentUser!.sendEmailVerification();
 
-      // Step 3: Show verification screen
+      // 6️⃣ Show verification screen
       setState(() {
         showVerificationScreen = true;
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text(
-            "Verification email sent! Please check your inbox and verify.",
-          ),
+          content: Text("Verification email sent! Please check your inbox."),
         ),
       );
     } on FirebaseAuthException catch (e) {
@@ -391,41 +514,16 @@ class _RegisterFormState extends State<RegisterForm> {
     }
   }
 
+  // Check email verification
   Future<void> checkEmailVerified() async {
     await currentUser!.reload();
     currentUser = FirebaseAuth.instance.currentUser;
 
     if (currentUser!.emailVerified) {
-      // Hash password before saving
-      var bytes = utf8.encode(passwordController.text.trim());
-      var hashedPassword = sha256.convert(bytes).toString();
-
-      // Save user info to Firestore
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(currentUser!.uid)
-          .set({
-            'fullName': fullNameController.text.trim(),
-            'userName': userNameController.text.trim(),
-            'email': emailController.text.trim(),
-            'gender': selectedGender.toString().split('.').last,
-            'password': hashedPassword,
-            'createdAt': FieldValue.serverTimestamp(),
-          });
-
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Email verified! Account created successfully."),
-        ),
+        const SnackBar(content: Text("Email verified! Account activated.")),
       );
-
-      // Navigate or reset form
-      setState(() {
-        showVerificationScreen = false;
-      });
-
-      // Optional: navigate to home page
-      // Navigator.pushReplacement(...);
+      setState(() => showVerificationScreen = false);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -442,6 +540,7 @@ class _RegisterFormState extends State<RegisterForm> {
         : buildRegistrationForm();
   }
 
+  // Registration Form
   Widget buildRegistrationForm() {
     return SingleChildScrollView(
       child: Column(
@@ -465,6 +564,8 @@ class _RegisterFormState extends State<RegisterForm> {
             keyboardType: TextInputType.emailAddress,
           ),
           const SizedBox(height: 14),
+
+          // Gender selection
           Align(
             alignment: Alignment.centerLeft,
             child: Text(
@@ -477,49 +578,24 @@ class _RegisterFormState extends State<RegisterForm> {
             ),
           ),
           Row(
-            children: [
-              Expanded(
+            children: Gender.values.map((gender) {
+              return Expanded(
                 child: RadioListTile<Gender>(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('Male'),
-                  value: Gender.male,
+                  title: Text(gender.toString().split('.').last.capitalize()),
+                  value: gender,
                   groupValue: selectedGender,
                   onChanged: (Gender? value) {
-                    setState(() {
-                      selectedGender = value;
-                    });
+                    setState(() => selectedGender = value);
                   },
                 ),
-              ),
-              Expanded(
-                child: RadioListTile<Gender>(
-                  contentPadding: EdgeInsets.zero,
-                  title: const Text('Female'),
-                  value: Gender.female,
-                  groupValue: selectedGender,
-                  onChanged: (Gender? value) {
-                    setState(() {
-                      selectedGender = value;
-                    });
-                  },
-                ),
-              ),
-              Expanded(
-                child: RadioListTile<Gender>(
-                  contentPadding: EdgeInsets.zero,
-                  title: const Text('Other'),
-                  value: Gender.other,
-                  groupValue: selectedGender,
-                  onChanged: (Gender? value) {
-                    setState(() {
-                      selectedGender = value;
-                    });
-                  },
-                ),
-              ),
-            ],
+              );
+            }).toList(),
           ),
+
           const SizedBox(height: 14),
+
+          // Password
           CustomTextField(
             controller: passwordController,
             hintText: 'Password',
@@ -534,6 +610,8 @@ class _RegisterFormState extends State<RegisterForm> {
             ),
           ),
           const SizedBox(height: 14),
+
+          // Confirm Password
           CustomTextField(
             controller: confirmPasswordController,
             hintText: 'Confirm Password',
@@ -548,6 +626,8 @@ class _RegisterFormState extends State<RegisterForm> {
             ),
           ),
           const SizedBox(height: 14),
+
+          // Terms checkbox
           Row(
             children: [
               Checkbox(
@@ -584,6 +664,7 @@ class _RegisterFormState extends State<RegisterForm> {
             ],
           ),
           const SizedBox(height: 18),
+
           ElevatedButton(
             onPressed: agreeToTerms ? registerUser : null,
             style: ElevatedButton.styleFrom(
@@ -609,6 +690,7 @@ class _RegisterFormState extends State<RegisterForm> {
     );
   }
 
+  // Verification Screen
   Widget buildEmailVerificationScreen() {
     return Center(
       child: Padding(
@@ -629,6 +711,7 @@ class _RegisterFormState extends State<RegisterForm> {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 30),
+
             ElevatedButton.icon(
               onPressed: checkEmailVerified,
               icon: const Icon(Icons.check_circle_outline),
@@ -638,7 +721,9 @@ class _RegisterFormState extends State<RegisterForm> {
                 minimumSize: const Size(double.infinity, 50),
               ),
             ),
+
             const SizedBox(height: 16),
+
             TextButton(
               onPressed: () async {
                 await currentUser!.sendEmailVerification();
@@ -653,4 +738,9 @@ class _RegisterFormState extends State<RegisterForm> {
       ),
     );
   }
+}
+
+// Extension to capitalize first letter
+extension StringCasingExtension on String {
+  String capitalize() => '${this[0].toUpperCase()}${substring(1)}';
 }

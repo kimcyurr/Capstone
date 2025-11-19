@@ -46,6 +46,7 @@ dependencies:
   mongo_dart: ^0.10.0
   fl_chart: ^1.1.1
   image_picker: ^1.2.1
+  firebase_storage: ^13.0.4
 
 dev_dependencies:
   flutter_test:
@@ -78,6 +79,7 @@ flutter:
     - image\image\camera-solid-full.png
     - image\image\house-solid-full.png
     - image\image\user-solid-full.png
+    - image\image\logo.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
