@@ -758,7 +758,7 @@ class _LoginFormState extends State<LoginForm> {
       // Navigate to HomePage
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => HomePage(userName: userName)),
+        MaterialPageRoute(builder: (_) => const HomePage()),
       );
     } on FirebaseAuthException catch (e) {
       String message = '';

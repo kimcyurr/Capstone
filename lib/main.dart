@@ -66,6 +66,7 @@ class AgriculturalApp extends StatelessWidget {
       title: 'AgSecure',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        fontFamily: "Poppins",
         primaryColor: const Color(0xFF2D5F2E),
         scaffoldBackgroundColor: const Color(0xFFF5F5F5),
         appBarTheme: const AppBarTheme(
