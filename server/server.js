@@ -1,3 +1,5 @@
+
+
 // const express = require("express");
 // const mongoose = require("mongoose");
 // const cors = require("cors");
@@ -61,7 +63,7 @@
 //     await feature.save();
 
 //     console.log("✅ Feature saved to MongoDB:", feature);
-//     res.status(200).json({ message: "Feature saved successfully" });
+//     res.status(200).json({ message: "Feature saved successfully", feature });
 //   } catch (e) {
 //     console.log("❌ Error saving feature:", e);
 //     res.status(500).json({ error: e.message });
@@ -75,6 +77,53 @@
 //     res.status(200).json(features);
 //   } catch (e) {
 //     console.log("❌ Error fetching features:", e);
+//     res.status(500).json({ error: e.message });
+//   }
+// });
+
+// // ----------------------------
+// // UPDATE Feature (Edit)
+// // ----------------------------
+// app.put("/api/feature/update/:id", async (req, res) => {
+//   try {
+//     const { title, description, image } = req.body;
+
+//     const updateData = { title, description };
+//     if (image) updateData.image = image; // only update image if provided
+
+//     const updatedFeature = await Feature.findByIdAndUpdate(
+//       req.params.id,
+//       updateData,
+//       { new: true } // return updated document
+//     );
+
+//     if (!updatedFeature) {
+//       return res.status(404).json({ error: "Feature not found" });
+//     }
+
+//     res
+//       .status(200)
+//       .json({ message: "Feature updated successfully", feature: updatedFeature });
+//   } catch (e) {
+//     console.log("❌ Error updating feature:", e);
+//     res.status(500).json({ error: e.message });
+//   }
+// });
+
+// // ----------------------------
+// // DELETE Feature
+// // ----------------------------
+// app.delete("/api/feature/delete/:id", async (req, res) => {
+//   try {
+//     const deletedFeature = await Feature.findByIdAndDelete(req.params.id);
+
+//     if (!deletedFeature) {
+//       return res.status(404).json({ error: "Feature not found" });
+//     }
+
+//     res.status(200).json({ message: "Feature deleted successfully" });
+//   } catch (e) {
+//     console.log("❌ Error deleting feature:", e);
 //     res.status(500).json({ error: e.message });
 //   }
 // });
@@ -117,6 +166,7 @@ const FeatureSchema = new mongoose.Schema(
     title: String,
     description: String,
     image: String, // base64 string
+    steps: { type: [String], default: [] }, // <-- added steps field
   },
   { timestamps: true } // automatically add createdAt/updatedAt
 );
@@ -138,7 +188,7 @@ app.post("/api/feature/add", async (req, res) => {
   console.log("Request body:", req.body);
 
   try {
-    const { title, description, image } = req.body;
+    const { title, description, image, steps } = req.body;
 
     if (!title || !description || !image) {
       return res
@@ -146,7 +196,13 @@ app.post("/api/feature/add", async (req, res) => {
         .json({ error: "Missing title, description, or image" });
     }
 
-    const feature = new Feature({ title, description, image });
+    const feature = new Feature({
+      title,
+      description,
+      image,
+      steps: Array.isArray(steps) ? steps : [], // store steps if provided
+    });
+
     await feature.save();
 
     console.log("✅ Feature saved to MongoDB:", feature);
@@ -171,31 +227,37 @@ app.get("/api/feature/all", async (req, res) => {
 // ----------------------------
 // UPDATE Feature (Edit)
 // ----------------------------
+// UPDATE Feature (Edit)
 app.put("/api/feature/update/:id", async (req, res) => {
   try {
-    const { title, description, image } = req.body;
+    const { title, description, image, steps } = req.body;
 
     const updateData = { title, description };
-    if (image) updateData.image = image; // only update image if provided
+
+    if (image) updateData.image = image;
+    // Always update steps, even if empty
+    if (steps !== undefined) updateData.steps = Array.isArray(steps) ? steps : [];
+
+    console.log(`Updating Feature ${req.params.id}:`, updateData);
 
     const updatedFeature = await Feature.findByIdAndUpdate(
       req.params.id,
       updateData,
-      { new: true } // return updated document
+      { new: true }
     );
 
     if (!updatedFeature) {
       return res.status(404).json({ error: "Feature not found" });
     }
 
-    res
-      .status(200)
-      .json({ message: "Feature updated successfully", feature: updatedFeature });
+    console.log("✅ Feature updated:", updatedFeature);
+    res.status(200).json({ message: "Feature updated successfully", feature: updatedFeature });
   } catch (e) {
     console.log("❌ Error updating feature:", e);
     res.status(500).json({ error: e.message });
   }
 });
+
 
 // ----------------------------
 // DELETE Feature
@@ -208,6 +270,7 @@ app.delete("/api/feature/delete/:id", async (req, res) => {
       return res.status(404).json({ error: "Feature not found" });
     }
 
+    console.log("✅ Feature deleted:", deletedFeature);
     res.status(200).json({ message: "Feature deleted successfully" });
   } catch (e) {
     console.log("❌ Error deleting feature:", e);
@@ -222,3 +285,4 @@ const PORT = 3000;
 app.listen(PORT, "0.0.0.0", () =>
   console.log(`🚀 Server running on http://localhost:${PORT}`)
 );
+

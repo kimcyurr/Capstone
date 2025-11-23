@@ -602,8 +602,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/social_button.dart';
 import 'forgot_password_screen.dart';
-import 'home.dart';
-import 'admin_dashboard.dart';
+import '../homepage/home.dart';
+import '../Admin/admin_dashboard.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
