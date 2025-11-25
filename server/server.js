@@ -3,17 +3,35 @@
 // const express = require("express");
 // const mongoose = require("mongoose");
 // const cors = require("cors");
+// const os = require("os");
 
 // const app = express();
 
 // // ----------------------------
-// // Middleware
+// // Get Local IP (for mobile testing)
 // // ----------------------------
-// app.use(cors()); // allow requests from any origin
-// app.use(express.json({ limit: "10mb" })); // allow large JSON payloads (images)
+// function getLocalIP() {
+//   const interfaces = os.networkInterfaces();
+//   for (let name in interfaces) {
+//     for (let iface of interfaces[name]) {
+//       if (iface.family === "IPv4" && !iface.internal && iface.address.startsWith("192.168")) {
+//         return iface.address;
+//       }
+//     }
+//   }
+//   return "localhost";
+// }
+
+// const LOCAL_IP = getLocalIP();
 
 // // ----------------------------
-// // Connect to MongoDB Atlas
+// // Middleware
+// // ----------------------------
+// app.use(cors({ origin: "*" }));
+// app.use(express.json({ limit: "10mb" }));
+
+// // ----------------------------
+// // MongoDB Connection
 // // ----------------------------
 // mongoose
 //   .connect(
@@ -23,15 +41,16 @@
 //   .catch((err) => console.log("❌ MongoDB connection error:", err));
 
 // // ----------------------------
-// // Mongoose Schema
+// // Schema
 // // ----------------------------
 // const FeatureSchema = new mongoose.Schema(
 //   {
 //     title: String,
 //     description: String,
-//     image: String, // base64 string
+//     image: String,
+//     steps: { type: [String], default: [] },
 //   },
-//   { timestamps: true } // automatically add createdAt/updatedAt
+//   { timestamps: true }
 // );
 
 // const Feature = mongoose.model("Feature", FeatureSchema);
@@ -39,91 +58,68 @@
 // // ----------------------------
 // // Routes
 // // ----------------------------
-
-// // Test route
 // app.get("/", (req, res) => {
-//   res.send("Server is running");
+//   res.send("Server is running 🔥");
 // });
 
-// // Add a new feature
 // app.post("/api/feature/add", async (req, res) => {
-//   console.log("POST /api/feature/add hit");
-//   console.log("Request body:", req.body);
-
 //   try {
-//     const { title, description, image } = req.body;
+//     const { title, description, image, steps } = req.body;
 
 //     if (!title || !description || !image) {
-//       return res
-//         .status(400)
-//         .json({ error: "Missing title, description, or image" });
+//       return res.status(400).json({ error: "Missing title, description, or image" });
 //     }
 
-//     const feature = new Feature({ title, description, image });
-//     await feature.save();
+//     const feature = await Feature.create({
+//       title,
+//       description,
+//       image,
+//       steps: Array.isArray(steps) ? steps : [],
+//     });
 
-//     console.log("✅ Feature saved to MongoDB:", feature);
-//     res.status(200).json({ message: "Feature saved successfully", feature });
+//     res.status(200).json({ message: "Feature added", feature });
 //   } catch (e) {
-//     console.log("❌ Error saving feature:", e);
 //     res.status(500).json({ error: e.message });
 //   }
 // });
 
-// // Get all features
 // app.get("/api/feature/all", async (req, res) => {
 //   try {
 //     const features = await Feature.find().sort({ createdAt: -1 });
 //     res.status(200).json(features);
 //   } catch (e) {
-//     console.log("❌ Error fetching features:", e);
 //     res.status(500).json({ error: e.message });
 //   }
 // });
 
-// // ----------------------------
-// // UPDATE Feature (Edit)
-// // ----------------------------
 // app.put("/api/feature/update/:id", async (req, res) => {
 //   try {
-//     const { title, description, image } = req.body;
+//     const { title, description, image, steps } = req.body;
 
 //     const updateData = { title, description };
-//     if (image) updateData.image = image; // only update image if provided
+//     if (image) updateData.image = image;
+//     if (steps !== undefined) updateData.steps = Array.isArray(steps) ? steps : [];
 
-//     const updatedFeature = await Feature.findByIdAndUpdate(
-//       req.params.id,
-//       updateData,
-//       { new: true } // return updated document
-//     );
+//     const updatedFeature = await Feature.findByIdAndUpdate(req.params.id, updateData, {
+//       new: true,
+//     });
 
-//     if (!updatedFeature) {
-//       return res.status(404).json({ error: "Feature not found" });
-//     }
+//     if (!updatedFeature) return res.status(404).json({ error: "Feature not found" });
 
-//     res
-//       .status(200)
-//       .json({ message: "Feature updated successfully", feature: updatedFeature });
+//     res.status(200).json({ message: "Feature updated", feature: updatedFeature });
 //   } catch (e) {
-//     console.log("❌ Error updating feature:", e);
 //     res.status(500).json({ error: e.message });
 //   }
 // });
 
-// // ----------------------------
-// // DELETE Feature
-// // ----------------------------
 // app.delete("/api/feature/delete/:id", async (req, res) => {
 //   try {
-//     const deletedFeature = await Feature.findByIdAndDelete(req.params.id);
+//     const deleted = await Feature.findByIdAndDelete(req.params.id);
 
-//     if (!deletedFeature) {
-//       return res.status(404).json({ error: "Feature not found" });
-//     }
+//     if (!deleted) return res.status(404).json({ error: "Feature not found" });
 
-//     res.status(200).json({ message: "Feature deleted successfully" });
+//     res.status(200).json({ message: "Feature deleted" });
 //   } catch (e) {
-//     console.log("❌ Error deleting feature:", e);
 //     res.status(500).json({ error: e.message });
 //   }
 // });
@@ -132,43 +128,69 @@
 // // Start Server
 // // ----------------------------
 // const PORT = 3000;
-// app.listen(PORT, "0.0.0.0", () =>
-//   console.log(`🚀 Server running on http://localhost:${PORT}`)
-// );
+// app.listen(PORT, "0.0.0.0", () => {
+//   console.log("🚀 Server running!");
+//   console.log(`📱 Mobile: http://${LOCAL_IP}:${PORT}`);
+//   console.log(`💻 PC: http://localhost:${PORT}`);
+// });
+
 
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const os = require("os");
 
 const app = express();
 
 // ----------------------------
+// Get Local IP (for mobile testing)
+// ----------------------------
+function getLocalIP() {
+  const interfaces = os.networkInterfaces();
+  for (let name in interfaces) {
+    for (let iface of interfaces[name]) {
+      if (iface.family === "IPv4" && !iface.internal && iface.address.startsWith("192.168")) {
+        return iface.address;
+      }
+    }
+  }
+  return "localhost";
+}
+
+const LOCAL_IP = getLocalIP();
+
+// ----------------------------
 // Middleware
 // ----------------------------
-app.use(cors()); // allow requests from any origin
-app.use(express.json({ limit: "10mb" })); // allow large JSON payloads (images)
+app.use(cors({ origin: "*" }));
+app.use(express.json({ limit: "10mb" }));
 
 // ----------------------------
-// Connect to MongoDB Atlas
+// MongoDB
 // ----------------------------
 mongoose
-  .connect(
-    "mongodb+srv://aureakimcyrus15:cymik123@capstone.db06dq4.mongodb.net/capstone?retryWrites=true&w=majority"
-  )
+  .connect("mongodb+srv://aureakimcyrus15:cymik123@capstone.db06dq4.mongodb.net/capstone")
   .then(() => console.log("✅ MongoDB Connected"))
-  .catch((err) => console.log("❌ MongoDB connection error:", err));
+  .catch((err) => console.log("❌ MongoDB Error:", err));
 
 // ----------------------------
-// Mongoose Schema
+// Schema Update (IMPORTANT)
+// ----------------------------
+// steps: [{ title: String, content: String }]
 // ----------------------------
 const FeatureSchema = new mongoose.Schema(
   {
     title: String,
     description: String,
-    image: String, // base64 string
-    steps: { type: [String], default: [] }, // <-- added steps field
+    image: String,
+    steps: [
+      {
+        title: String,
+        content: String,
+      }
+    ]
   },
-  { timestamps: true } // automatically add createdAt/updatedAt
+  { timestamps: true }
 );
 
 const Feature = mongoose.model("Feature", FeatureSchema);
@@ -177,112 +199,78 @@ const Feature = mongoose.model("Feature", FeatureSchema);
 // Routes
 // ----------------------------
 
-// Test route
+// Test Route
 app.get("/", (req, res) => {
-  res.send("Server is running");
+  res.send("Server is running 🔥");
 });
 
-// Add a new feature
+// Add Feature
 app.post("/api/feature/add", async (req, res) => {
-  console.log("POST /api/feature/add hit");
-  console.log("Request body:", req.body);
-
   try {
     const { title, description, image, steps } = req.body;
 
-    if (!title || !description || !image) {
-      return res
-        .status(400)
-        .json({ error: "Missing title, description, or image" });
-    }
-
-    const feature = new Feature({
+    const newFeature = await Feature.create({
       title,
       description,
       image,
-      steps: Array.isArray(steps) ? steps : [], // store steps if provided
+      steps: Array.isArray(steps) ? steps : []
     });
 
-    await feature.save();
-
-    console.log("✅ Feature saved to MongoDB:", feature);
-    res.status(200).json({ message: "Feature saved successfully", feature });
-  } catch (e) {
-    console.log("❌ Error saving feature:", e);
-    res.status(500).json({ error: e.message });
+    res.status(200).json({ message: "Feature added", feature: newFeature });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
-// Get all features
+// Get All Features
 app.get("/api/feature/all", async (req, res) => {
   try {
     const features = await Feature.find().sort({ createdAt: -1 });
-    res.status(200).json(features);
-  } catch (e) {
-    console.log("❌ Error fetching features:", e);
-    res.status(500).json({ error: e.message });
+    res.json(features);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
-// ----------------------------
-// UPDATE Feature (Edit)
-// ----------------------------
-// UPDATE Feature (Edit)
+// Update Feature
 app.put("/api/feature/update/:id", async (req, res) => {
   try {
     const { title, description, image, steps } = req.body;
 
-    const updateData = { title, description };
+    const updateData = {
+      title,
+      description,
+    };
 
     if (image) updateData.image = image;
-    // Always update steps, even if empty
-    if (steps !== undefined) updateData.steps = Array.isArray(steps) ? steps : [];
+    if (steps) updateData.steps = steps; // now array of objects
 
-    console.log(`Updating Feature ${req.params.id}:`, updateData);
+    const updated = await Feature.findByIdAndUpdate(req.params.id, updateData, {
+      new: true,
+    });
 
-    const updatedFeature = await Feature.findByIdAndUpdate(
-      req.params.id,
-      updateData,
-      { new: true }
-    );
-
-    if (!updatedFeature) {
-      return res.status(404).json({ error: "Feature not found" });
-    }
-
-    console.log("✅ Feature updated:", updatedFeature);
-    res.status(200).json({ message: "Feature updated successfully", feature: updatedFeature });
-  } catch (e) {
-    console.log("❌ Error updating feature:", e);
-    res.status(500).json({ error: e.message });
+    res.json({ message: "Feature updated", feature: updated });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
-
-// ----------------------------
-// DELETE Feature
-// ----------------------------
+// Delete Feature
 app.delete("/api/feature/delete/:id", async (req, res) => {
   try {
-    const deletedFeature = await Feature.findByIdAndDelete(req.params.id);
-
-    if (!deletedFeature) {
-      return res.status(404).json({ error: "Feature not found" });
-    }
-
-    console.log("✅ Feature deleted:", deletedFeature);
-    res.status(200).json({ message: "Feature deleted successfully" });
-  } catch (e) {
-    console.log("❌ Error deleting feature:", e);
-    res.status(500).json({ error: e.message });
+    await Feature.findByIdAndDelete(req.params.id);
+    res.json({ message: "Feature deleted" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
 // ----------------------------
-// Start Server
+// Run Server
 // ----------------------------
 const PORT = 3000;
-app.listen(PORT, "0.0.0.0", () =>
-  console.log(`🚀 Server running on http://localhost:${PORT}`)
-);
-
+app.listen(PORT, "0.0.0.0", () => {
+  console.log("🚀 Server running!");
+  console.log(`📱 Mobile: http://${LOCAL_IP}:${PORT}`);
+  console.log(`💻 PC: http://localhost:${PORT}`);
+});

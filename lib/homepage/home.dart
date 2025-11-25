@@ -288,7 +288,7 @@ class _HomePageState extends State<HomePage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: const [
               Text(
-                "Get started",
+                "Get Started",
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
               Text(

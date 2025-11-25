@@ -153,7 +153,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               ),
               child: isLoading
                   ? const CircularProgressIndicator(color: Colors.white)
-                  : const Text("Send Reset Email"),
+                  : const Text(
+                      "Send Reset Email",
+                      style: TextStyle(
+                        // fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
             ),
           ],
         ),
