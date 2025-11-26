@@ -141,6 +141,15 @@ const cors = require("cors");
 const os = require("os");
 
 const app = express();
+const readingHistoryRoutes = require("./routes/readingHistory");
+// const readingHistoryRoutes = require("./routes/readingHistory");
+// app.use("/api/reading-history", readingHistoryRoutes);
+// At the top of server.js
+
+
+// After other routes
+
+
 
 // ----------------------------
 // Get Local IP (for mobile testing)
@@ -204,6 +213,7 @@ app.get("/", (req, res) => {
   res.send("Server is running 🔥");
 });
 
+app.use("/api/reading-history", readingHistoryRoutes);
 // Add Feature
 app.post("/api/feature/add", async (req, res) => {
   try {
