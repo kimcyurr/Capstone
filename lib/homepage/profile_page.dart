@@ -328,8 +328,8 @@ class _ProfilePageState extends State<ProfilePage> {
   List readingHistory = [];
   bool isLoadingHistory = true;
 
-  final String backendBase = "http://192.168.123.33:3000";
-
+  final String backendBase = "https://agsecure-backend.onrender.com";
+  // final String backendBase = "http://192.168.8.125:3000";
   @override
   void initState() {
     super.initState();
@@ -395,7 +395,7 @@ class _ProfilePageState extends State<ProfilePage> {
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: Colors.green[50],
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,

@@ -527,7 +527,9 @@ class AdminDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final featureService = FeatureService(backendIP: "localhost");
+    final featureService = FeatureService(
+      backendBase: "https://agsecure-backend.onrender.com",
+    );
 
     return Scaffold(
       appBar: AppBar(title: const Text("Admin Dashboard")),
