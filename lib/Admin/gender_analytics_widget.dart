@@ -143,9 +143,9 @@ class GenderAnalyticsWidget extends StatelessWidget {
       children: [
         const Text(
           "Gender Analytics",
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 10),
 
         StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance.collection('users').snapshots(),
@@ -178,37 +178,35 @@ class GenderAnalyticsWidget extends StatelessWidget {
 
             return Column(
               children: [
-                // =====================
-                // 🔵 OVERALL TOTAL USERS
-                // =====================
+                // Total Users (Smaller)
                 Text(
                   "Total Users: $total",
                   style: const TextStyle(
-                    fontSize: 18,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
 
-                // ================
-                // 🥧 PIE CHART
-                // ================
+                // ======================
+                // 📌 SMALL PIE CHART
+                // ======================
                 SizedBox(
-                  height: 260,
+                  height: 170,
                   child: PieChart(
                     PieChartData(
-                      sectionsSpace: 4,
-                      centerSpaceRadius: 40,
+                      sectionsSpace: 2,
+                      centerSpaceRadius: 25,
                       sections: [
                         PieChartSectionData(
                           value: male.toDouble(),
                           color: Colors.blue,
                           title: male == 0 ? "" : "$male",
-                          radius: 90,
+                          radius: 55, // smaller
                           titleStyle: const TextStyle(
                             color: Colors.white,
-                            fontSize: 16,
+                            fontSize: 12,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -216,10 +214,10 @@ class GenderAnalyticsWidget extends StatelessWidget {
                           value: female.toDouble(),
                           color: Colors.pink,
                           title: female == 0 ? "" : "$female",
-                          radius: 90,
+                          radius: 55,
                           titleStyle: const TextStyle(
                             color: Colors.white,
-                            fontSize: 16,
+                            fontSize: 12,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -227,10 +225,10 @@ class GenderAnalyticsWidget extends StatelessWidget {
                           value: other.toDouble(),
                           color: Colors.green,
                           title: other == 0 ? "" : "$other",
-                          radius: 90,
+                          radius: 55,
                           titleStyle: const TextStyle(
                             color: Colors.white,
-                            fontSize: 16,
+                            fontSize: 12,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -239,104 +237,17 @@ class GenderAnalyticsWidget extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: 10),
 
-                // =====================
-                // 🔹 LEGEND
-                // =====================
+                // Compact Legend
                 Wrap(
                   alignment: WrapAlignment.center,
-                  spacing: 20,
+                  spacing: 12,
                   children: [
                     _legendItem(Colors.blue, "Male ($male)"),
                     _legendItem(Colors.pink, "Female ($female)"),
                     _legendItem(Colors.green, "Other ($other)"),
                   ],
-                ),
-
-                const SizedBox(height: 30),
-
-                // =====================
-                // 📊 BAR CHART
-                // =====================
-                SizedBox(
-                  height: 260,
-                  child: BarChart(
-                    BarChartData(
-                      alignment: BarChartAlignment.spaceAround,
-                      maxY:
-                          ([
-                            male.toDouble(),
-                            female.toDouble(),
-                            other.toDouble(),
-                          ].reduce((a, b) => a > b ? a : b)) +
-                          2,
-                      barTouchData: BarTouchData(enabled: true),
-                      titlesData: FlTitlesData(
-                        bottomTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: true,
-                            getTitlesWidget: (value, meta) {
-                              switch (value.toInt()) {
-                                case 0:
-                                  return const Text("Male");
-                                case 1:
-                                  return const Text("Female");
-                                case 2:
-                                  return const Text("Other");
-                              }
-                              return const Text("");
-                            },
-                          ),
-                        ),
-                        leftTitles: AxisTitles(
-                          sideTitles: SideTitles(showTitles: false),
-                        ),
-                        rightTitles: AxisTitles(
-                          sideTitles: SideTitles(showTitles: false),
-                        ),
-                        topTitles: AxisTitles(
-                          sideTitles: SideTitles(showTitles: false),
-                        ),
-                      ),
-                      borderData: FlBorderData(show: false),
-                      barGroups: [
-                        BarChartGroupData(
-                          x: 0,
-                          barRods: [
-                            BarChartRodData(
-                              toY: male.toDouble(),
-                              color: Colors.blue,
-                              width: 30,
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                          ],
-                        ),
-                        BarChartGroupData(
-                          x: 1,
-                          barRods: [
-                            BarChartRodData(
-                              toY: female.toDouble(),
-                              color: Colors.pink,
-                              width: 30,
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                          ],
-                        ),
-                        BarChartGroupData(
-                          x: 2,
-                          barRods: [
-                            BarChartRodData(
-                              toY: other.toDouble(),
-                              color: Colors.green,
-                              width: 30,
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
                 ),
               ],
             );
@@ -351,12 +262,12 @@ class GenderAnalyticsWidget extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: 14,
-          height: 14,
+          width: 12,
+          height: 12,
           decoration: BoxDecoration(shape: BoxShape.circle, color: color),
         ),
-        const SizedBox(width: 6),
-        Text(label, style: const TextStyle(fontSize: 14)),
+        const SizedBox(width: 4),
+        Text(label, style: const TextStyle(fontSize: 12)),
       ],
     );
   }
