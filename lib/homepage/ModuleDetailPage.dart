@@ -1365,7 +1365,7 @@ class _ModuleDetailPageState extends State<ModuleDetailPage>
                                   child: Text(
                                     isExpanded ? "Read less" : "Read more...",
                                     style: const TextStyle(
-                                      color: Colors.green,
+                                      color: Colors.black,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -1391,7 +1391,7 @@ class _ModuleDetailPageState extends State<ModuleDetailPage>
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Colors.green,
+                          color: Color(0xFF2D5F2E),
                         ),
                       ),
                       const SizedBox(height: 10),
@@ -1472,7 +1472,7 @@ class _ModuleDetailPageState extends State<ModuleDetailPage>
                 "$step",
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: Colors.green,
+                  color: Color(0xFF2D5F2E),
                 ),
               ),
             ),

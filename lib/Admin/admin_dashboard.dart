@@ -349,29 +349,32 @@ class _AdminDashboardState extends State<AdminDashboard> {
 
   @override
   Widget build(BuildContext context) {
-    // Make sure pages list matches sidebar menu count
     List<Widget> pages = [
-      // Main Dashboard page
+      // MAIN DASHBOARD PAGE
       SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              "Overview",
+              "Dashboard",
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
 
-            // Top Row: Login Chart & Gender Analytics
+            // TOP ROW: LOGIN CHART + GENDER ANALYTICS
             LayoutBuilder(
               builder: (context, constraints) {
                 bool isWide = constraints.maxWidth > 800;
+
                 return Flex(
                   direction: isWide ? Axis.horizontal : Axis.vertical,
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Expanded(
+                    // 🔹 LOGIN ANALYTICS CARD
+                    Flexible(
+                      fit: FlexFit.loose,
                       child: Card(
                         elevation: 4,
                         shape: RoundedRectangleBorder(
@@ -395,8 +398,12 @@ class _AdminDashboardState extends State<AdminDashboard> {
                         ),
                       ),
                     ),
+
                     SizedBox(width: isWide ? 16 : 0, height: isWide ? 0 : 16),
-                    Expanded(
+
+                    // 🔹 GENDER ANALYTICS CARD
+                    Flexible(
+                      fit: FlexFit.loose,
                       child: Card(
                         elevation: 4,
                         shape: RoundedRectangleBorder(
@@ -426,48 +433,23 @@ class _AdminDashboardState extends State<AdminDashboard> {
             ),
 
             const SizedBox(height: 16),
-
-            // Registered Users
-            // Card(
-            //   elevation: 4,
-            //   shape: RoundedRectangleBorder(
-            //     borderRadius: BorderRadius.circular(12),
-            //   ),
-            //   child: Padding(
-            //     padding: const EdgeInsets.all(16),
-            //     child: const AdminUsersWidget(),
-            //   ),
-            // ),
-            const SizedBox(height: 16),
-
-            // Login History
-            // Card(
-            //   elevation: 4,
-            //   shape: RoundedRectangleBorder(
-            //     borderRadius: BorderRadius.circular(12),
-            //   ),
-            //   child: Padding(
-            //     padding: const EdgeInsets.all(16),
-            //     child: const LoginHistoryWidget(limit: 20),
-            //   ),
-            // ),
           ],
         ),
       ),
 
-      // Add Module Page placeholder (empty)
+      // ADD MODULE PAGE
       SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: FeatureCrudWidget(featureService: featureService),
       ),
 
-      // Registered Users Page
+      // REGISTERED USERS PAGE
       SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: const AdminUsersWidget(),
       ),
 
-      // Login Monitoring Page placeholder
+      // LOGIN MONITORING PAGE
       SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: LoginHistoryWidget(limit: 20),
@@ -477,7 +459,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
     return Scaffold(
       body: Row(
         children: [
-          // Sidebar
+          // SIDEBAR
           Container(
             width: 250,
             color: Colors.white,
@@ -507,6 +489,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                     ],
                   ),
                 ),
+
                 menuItem(index: 0, icon: Icons.dashboard, title: "Dashboard"),
                 menuItem(index: 1, icon: Icons.add_box, title: "Add Module"),
                 menuItem(
@@ -523,7 +506,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
             ),
           ),
 
-          // Main Content
+          // MAIN CONTENT AREA
           Expanded(child: pages[selectedIndex]),
         ],
       ),

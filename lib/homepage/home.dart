@@ -1194,7 +1194,7 @@ class _HomePageState extends State<HomePage> {
       if (response.statusCode == 200) {
         List data = json.decode(response.body);
         data.shuffle(Random());
-        return data.take(3).toList();
+        return data.take(10).toList();
       }
     } catch (e) {
       print("Error loading random features: $e");

@@ -257,3 +257,241 @@ class _AdminUsersWidgetState extends State<AdminUsersWidget> {
     );
   }
 }
+
+// import 'package:flutter/material.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:intl/intl.dart';
+
+// class AdminUsersWidget extends StatefulWidget {
+//   const AdminUsersWidget({super.key});
+
+//   @override
+//   State<AdminUsersWidget> createState() => _AdminUsersWidgetState();
+// }
+
+// class _AdminUsersWidgetState extends State<AdminUsersWidget> {
+//   String searchQuery = "";
+//   List<QueryDocumentSnapshot<Map<String, dynamic>>> users = [];
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _loadUsers();
+//   }
+
+//   Future<void> _loadUsers() async {
+//     try {
+//       final snapshot = await FirebaseFirestore.instance
+//           .collection('users')
+//           .orderBy('createdAt', descending: true)
+//           .get();
+
+//       setState(() {
+//         users = snapshot.docs;
+//       });
+//     } catch (e) {
+//       debugPrint("Error loading users: $e");
+//     }
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     // Filter users based on search query
+//     final filteredUsers = users.where((user) {
+//       final data = user.data();
+//       final name = data['fullName'] ?? '';
+//       final email = data['email'] ?? '';
+//       return name.toLowerCase().contains(searchQuery.toLowerCase()) ||
+//           email.toLowerCase().contains(searchQuery.toLowerCase());
+//     }).toList();
+
+//     return Column(
+//       children: [
+//         // Search Field
+//         Padding(
+//           padding: const EdgeInsets.all(8.0),
+//           child: TextField(
+//             decoration: const InputDecoration(
+//               labelText: "Search Users",
+//               prefixIcon: Icon(Icons.search),
+//               border: OutlineInputBorder(),
+//             ),
+//             onChanged: (value) {
+//               setState(() {
+//                 searchQuery = value;
+//               });
+//             },
+//           ),
+//         ),
+
+//         // Table Header
+//         Container(
+//           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+//           decoration: BoxDecoration(
+//             border: Border(bottom: BorderSide(color: Colors.grey.shade400)),
+//           ),
+//           child: Row(
+//             children: const [
+//               Expanded(
+//                 child: Text(
+//                   "USER",
+//                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+//                 ),
+//               ),
+//               Expanded(
+//                 child: Text(
+//                   "CONTACT",
+//                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+//                 ),
+//               ),
+//               Expanded(
+//                 child: Text(
+//                   "GENDER",
+//                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+//                 ),
+//               ),
+//               Expanded(
+//                 child: Text(
+//                   "CREATED",
+//                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+
+//         const SizedBox(height: 4),
+
+//         // User List
+//         Expanded(
+//           child: ListView.builder(
+//             itemCount: filteredUsers.length,
+//             itemBuilder: (context, index) {
+//               final userDoc = filteredUsers[index];
+//               final data = userDoc.data();
+
+//               final fullName = data['fullName'] ?? "No Name";
+//               final email = data['email'] ?? "No Email";
+//               final gender = data['gender'] ?? "N/A";
+
+//               // Initials for avatar
+//               final initials = fullName.isNotEmpty
+//                   ? fullName
+//                         .trim()
+//                         .split(" ")
+//                         .map((e) => e[0])
+//                         .take(2)
+//                         .join()
+//                         .toUpperCase()
+//                   : "?";
+
+//               // CreatedAt
+//               final createdAt = data['createdAt'];
+//               String createdText = "Unknown";
+
+//               if (createdAt != null) {
+//                 try {
+//                   DateTime date = createdAt is Timestamp
+//                       ? createdAt.toDate()
+//                       : DateTime.tryParse(createdAt.toString()) ??
+//                             DateTime.now();
+
+//                   createdText = DateFormat('MMM dd, yyyy').format(date);
+//                 } catch (e) {
+//                   createdText = "Invalid";
+//                 }
+//               }
+
+//               return Container(
+//                 padding: const EdgeInsets.symmetric(
+//                   vertical: 12,
+//                   horizontal: 8,
+//                 ),
+//                 margin: const EdgeInsets.only(bottom: 8),
+//                 decoration: BoxDecoration(
+//                   border: Border(
+//                     bottom: BorderSide(color: Colors.grey.shade300),
+//                   ),
+//                 ),
+//                 child: Row(
+//                   children: [
+//                     // USER
+//                     Expanded(
+//                       child: Row(
+//                         children: [
+//                           CircleAvatar(
+//                             radius: 20,
+//                             backgroundColor: Colors.green.shade300,
+//                             child: Text(
+//                               initials,
+//                               style: const TextStyle(
+//                                 color: Colors.white,
+//                                 fontWeight: FontWeight.bold,
+//                               ),
+//                             ),
+//                           ),
+//                           const SizedBox(width: 12),
+//                           Column(
+//                             crossAxisAlignment: CrossAxisAlignment.start,
+//                             children: [
+//                               Text(
+//                                 fullName,
+//                                 style: const TextStyle(
+//                                   fontWeight: FontWeight.w600,
+//                                 ),
+//                               ),
+//                               Text(
+//                                 "ID: ${userDoc.id.substring(0, 6)}...",
+//                                 style: TextStyle(
+//                                   fontSize: 12,
+//                                   color: Colors.grey.shade600,
+//                                 ),
+//                               ),
+//                             ],
+//                           ),
+//                         ],
+//                       ),
+//                     ),
+
+//                     // EMAIL
+//                     Expanded(
+//                       child: Text(
+//                         email,
+//                         style: TextStyle(
+//                           fontSize: 14,
+//                           color: Colors.grey.shade800,
+//                         ),
+//                       ),
+//                     ),
+
+//                     // GENDER
+//                     Expanded(
+//                       child: Text(
+//                         gender,
+//                         style: TextStyle(
+//                           fontSize: 14,
+//                           color: Colors.grey.shade800,
+//                         ),
+//                       ),
+//                     ),
+
+//                     // CREATED AT
+//                     Expanded(
+//                       child: Text(
+//                         createdText,
+//                         style: TextStyle(
+//                           fontSize: 14,
+//                           color: Colors.grey.shade800,
+//                         ),
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               );
+//             },
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
