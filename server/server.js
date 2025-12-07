@@ -1,36 +1,15 @@
 
+
+
+// //sjdknfskdjfndkjfnfk
 // const express = require("express");
 // const mongoose = require("mongoose");
 // const cors = require("cors");
-// const os = require("os");
 
 // const app = express();
+
+// // Routes
 // const readingHistoryRoutes = require("./routes/readingHistory");
-// // const readingHistoryRoutes = require("./routes/readingHistory");
-// // app.use("/api/reading-history", readingHistoryRoutes);
-// // At the top of server.js
-
-
-// // After other routes
-
-
-
-// // ----------------------------
-// // Get Local IP (for mobile testing)
-// // ----------------------------
-// function getLocalIP() {
-//   const interfaces = os.networkInterfaces();
-//   for (let name in interfaces) {
-//     for (let iface of interfaces[name]) {
-//       if (iface.family === "IPv4" && !iface.internal && iface.address.startsWith("192.168")) {
-//         return iface.address;
-//       }
-//     }
-//   }
-//   return "localhost";
-// }
-
-// const LOCAL_IP = getLocalIP();
 
 // // ----------------------------
 // // Middleware
@@ -39,17 +18,18 @@
 // app.use(express.json({ limit: "10mb" }));
 
 // // ----------------------------
-// // MongoDB
+// // MongoDB (using environment variable from Render)
 // // ----------------------------
 // mongoose
-//   .connect("process.env.mongodb+srv://aureakimcyrus15:cymik123@capstone.db06dq4.mongodb.net/capstone")
+//   .connect(process.env.MONGO_URI, {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true,
+//   })
 //   .then(() => console.log("✅ MongoDB Connected"))
 //   .catch((err) => console.log("❌ MongoDB Error:", err));
 
 // // ----------------------------
-// // Schema Update (IMPORTANT)
-// // ----------------------------
-// // steps: [{ title: String, content: String }]
+// // Schema (Feature)
 // // ----------------------------
 // const FeatureSchema = new mongoose.Schema(
 //   {
@@ -77,7 +57,9 @@
 //   res.send("Server is running 🔥");
 // });
 
+// // Reading History Routes
 // app.use("/api/reading-history", readingHistoryRoutes);
+
 // // Add Feature
 // app.post("/api/feature/add", async (req, res) => {
 //   try {
@@ -117,7 +99,7 @@
 //     };
 
 //     if (image) updateData.image = image;
-//     if (steps) updateData.steps = steps; // now array of objects
+//     if (steps) updateData.steps = steps;
 
 //     const updated = await Feature.findByIdAndUpdate(req.params.id, updateData, {
 //       new: true,
@@ -140,26 +122,29 @@
 // });
 
 // // ----------------------------
-// // Run Server
+// // Run Server on Render
 // // ----------------------------
-// const PORT = 3000;
-// app.listen(PORT, "0.0.0.0", () => {
-//   console.log("🚀 Server running!");
-//   console.log(`📱 Mobile: http://${LOCAL_IP}:${PORT}`);
-//   console.log(`💻 PC: http://localhost:${PORT}`);
+// const PORT = process.env.PORT || 3000;
+
+// app.listen(PORT, () => {
+//   console.log(`🚀 Server running on port ${PORT}`);
 // });
 
 
-
-//sjdknfskdjfndkjfnfk
+// ----------------------------
+// server.js
+// ----------------------------
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const dotenv = require("dotenv");
+
+// Load environment variables from .env in local development
+if (process.env.NODE_ENV !== "production") {
+  dotenv.config();
+}
 
 const app = express();
-
-// Routes
-const readingHistoryRoutes = require("./routes/readingHistory");
 
 // ----------------------------
 // Middleware
@@ -168,19 +153,30 @@ app.use(cors({ origin: "*" }));
 app.use(express.json({ limit: "10mb" }));
 
 // ----------------------------
-// MongoDB (using environment variable from Render)
+// MongoDB connection
 // ----------------------------
+const mongoUri = process.env.MONGO_URI;
+
+if (!mongoUri) {
+  console.error(
+    "❌ MONGO_URI is not defined! Set it in .env (for local) or Render environment variables."
+  );
+  process.exit(1); // Stop server if URI is missing
+}
+
 mongoose
-  .connect(process.env.MONGO_URI, {
+  .connect(mongoUri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
   .then(() => console.log("✅ MongoDB Connected"))
-  .catch((err) => console.log("❌ MongoDB Error:", err));
+  .catch((err) => console.error("❌ MongoDB Connection Error:", err));
 
 // ----------------------------
-// Schema (Feature)
+// Schemas
 // ----------------------------
+
+// Feature Schema
 const FeatureSchema = new mongoose.Schema(
   {
     title: String,
@@ -190,38 +186,46 @@ const FeatureSchema = new mongoose.Schema(
       {
         title: String,
         content: String,
-      }
-    ]
+      },
+    ],
   },
   { timestamps: true }
 );
 
 const Feature = mongoose.model("Feature", FeatureSchema);
 
-// ----------------------------
-// Routes
-// ----------------------------
+// Likes Schema
+const LikeSchema = new mongoose.Schema(
+  {
+    userId: { type: String, required: true },
+    moduleId: { type: String, required: true },
+  },
+  { timestamps: true }
+);
 
+const Like = mongoose.model("Like", LikeSchema);
+
+// ----------------------------
 // Test Route
+// ----------------------------
 app.get("/", (req, res) => {
   res.send("Server is running 🔥");
 });
 
-// Reading History Routes
-app.use("/api/reading-history", readingHistoryRoutes);
+// ----------------------------
+// Feature Routes
+// ----------------------------
 
 // Add Feature
 app.post("/api/feature/add", async (req, res) => {
   try {
     const { title, description, image, steps } = req.body;
-
     const newFeature = await Feature.create({
       title,
       description,
       image,
-      steps: Array.isArray(steps) ? steps : []
+      steps: Array.isArray(steps) ? steps : [],
     });
-
     res.status(200).json({ message: "Feature added", feature: newFeature });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -242,19 +246,11 @@ app.get("/api/feature/all", async (req, res) => {
 app.put("/api/feature/update/:id", async (req, res) => {
   try {
     const { title, description, image, steps } = req.body;
-
-    const updateData = {
-      title,
-      description,
-    };
-
+    const updateData = { title, description };
     if (image) updateData.image = image;
     if (steps) updateData.steps = steps;
 
-    const updated = await Feature.findByIdAndUpdate(req.params.id, updateData, {
-      new: true,
-    });
-
+    const updated = await Feature.findByIdAndUpdate(req.params.id, updateData, { new: true });
     res.json({ message: "Feature updated", feature: updated });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -272,169 +268,68 @@ app.delete("/api/feature/delete/:id", async (req, res) => {
 });
 
 // ----------------------------
-// Run Server on Render
+// Likes Routes
+// ----------------------------
+
+// Like a module
+app.post("/api/likes/like", async (req, res) => {
+  try {
+    const { userId, moduleId } = req.body;
+    if (!userId || !moduleId) return res.status(400).json({ error: "Missing userId or moduleId" });
+
+    const existing = await Like.findOne({ userId, moduleId });
+    if (existing) return res.status(400).json({ error: "Already liked" });
+
+    const like = new Like({ userId, moduleId });
+    await like.save();
+    res.status(200).json({ message: "Liked successfully" });
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Unlike a module
+app.post("/api/likes/unlike", async (req, res) => {
+  try {
+    const { userId, moduleId } = req.body;
+    if (!userId || !moduleId) return res.status(400).json({ error: "Missing userId or moduleId" });
+
+    await Like.deleteOne({ userId, moduleId });
+    res.status(200).json({ message: "Unliked successfully" });
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Get total likes for a module
+app.get("/api/likes/count/:moduleId", async (req, res) => {
+  try {
+    const { moduleId } = req.params;
+    const count = await Like.countDocuments({ moduleId });
+    res.status(200).json({ likes: count });
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Check if a user liked a module
+app.get("/api/likes/check/:userId/:moduleId", async (req, res) => {
+  try {
+    const { userId, moduleId } = req.params;
+    const liked = await Like.exists({ userId, moduleId });
+    res.status(200).json({ liked: !!liked });
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// ----------------------------
+// Start Server
 // ----------------------------
 const PORT = process.env.PORT || 3000;
-
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
 
 
-// const express = require("express");
-// const mongoose = require("mongoose");
-// const cors = require("cors");
 
-// const app = express();
-
-// // Routes
-// const readingHistoryRoutes = require("./routes/readingHistory");
-
-// // ----------------------------
-// // Middleware
-// // ----------------------------
-// app.use(cors({ origin: "*" }));
-// app.use(express.json({ limit: "20mb" })); // Increase limit for Base64 images
-
-// // ----------------------------
-// // MongoDB (using Render env variable)
-// // ----------------------------
-// mongoose
-//   .connect(process.env.MONGO_URI, {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true,
-//   })
-//   .then(() => console.log("✅ MongoDB Connected"))
-//   .catch((err) => console.log("❌ MongoDB Error:", err));
-
-// // ----------------------------
-// // Schema (Feature)
-// // ----------------------------
-// const StepSchema = new mongoose.Schema({
-//   title: String,
-//   content: String,
-//   image: String, // <-- ADDED THIS
-// });
-
-// const FeatureSchema = new mongoose.Schema(
-//   {
-//     title: String,
-//     description: String,
-//     image: String, // base64 string
-//     steps: [StepSchema], // <-- Step images now supported
-//   },
-//   { timestamps: true }
-// );
-
-// const Feature = mongoose.model("Feature", FeatureSchema);
-
-// // ----------------------------
-// // Routes
-// // ----------------------------
-
-// // Test Route
-// app.get("/", (req, res) => {
-//   res.send("Server is running 🔥");
-// });
-
-// // Reading History Routes
-// app.use("/api/reading-history", readingHistoryRoutes);
-
-// // ============================
-// // ADD FEATURE
-// // ============================
-// app.post("/api/feature/add", async (req, res) => {
-//   try {
-//     const { title, description, image, steps } = req.body;
-
-//     const formattedSteps = Array.isArray(steps)
-//       ? steps.map((s) => ({
-//           title: s.title || "",
-//           content: s.content || "",
-//           image: s.image || null, // <-- Store image
-//         }))
-//       : [];
-
-//     const newFeature = await Feature.create({
-//       title,
-//       description,
-//       image,
-//       steps: formattedSteps,
-//     });
-
-//     res.status(200).json({ message: "Feature added", feature: newFeature });
-//   } catch (err) {
-//     console.log("❌ Add Feature Error:", err);
-//     res.status(500).json({ error: err.message });
-//   }
-// });
-
-// // ============================
-// // GET ALL FEATURES
-// // ============================
-// app.get("/api/feature/all", async (req, res) => {
-//   try {
-//     const features = await Feature.find().sort({ createdAt: -1 });
-//     res.json(features);
-//   } catch (err) {
-//     console.log("❌ Get All Error:", err);
-//     res.status(500).json({ error: err.message });
-//   }
-// });
-
-// // ============================
-// // UPDATE FEATURE
-// // ============================
-// app.put("/api/feature/update/:id", async (req, res) => {
-//   try {
-//     const { title, description, image, steps } = req.body;
-
-//     const updateData = {
-//       title,
-//       description,
-//     };
-
-//     if (image !== undefined) updateData.image = image;
-
-//     if (Array.isArray(steps)) {
-//       updateData.steps = steps.map((s) => ({
-//         title: s.title || "",
-//         content: s.content || "",
-//         image: s.image || null, // <-- Step image support
-//       }));
-//     }
-
-//     const updated = await Feature.findByIdAndUpdate(
-//       req.params.id,
-//       updateData,
-//       { new: true }
-//     );
-
-//     res.json({ message: "Feature updated", feature: updated });
-//   } catch (err) {
-//     console.log("❌ Update Error:", err);
-//     res.status(500).json({ error: err.message });
-//   }
-// });
-
-// // ============================
-// // DELETE FEATURE
-// // ============================
-// app.delete("/api/feature/delete/:id", async (req, res) => {
-//   try {
-//     await Feature.findByIdAndDelete(req.params.id);
-//     res.json({ message: "Feature deleted" });
-//   } catch (err) {
-//     console.log("❌ Delete Error:", err);
-//     res.status(500).json({ error: err.message });
-//   }
-// });
-
-// // ----------------------------
-// // Run Server
-// // ----------------------------
-// const PORT = process.env.PORT || 3000;
-
-// app.listen(PORT, () => {
-//   console.log(`🚀 Server running on port ${PORT}`);
-// });

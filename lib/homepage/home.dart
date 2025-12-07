@@ -1358,7 +1358,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const SizedBox(height: 4),
                     const Text(
-                      "Saturday, 22 Nov 2025",
+                      "Saturday, 6 Dec 2025",
                       style: TextStyle(fontSize: 14, color: Colors.white70),
                     ),
                     const SizedBox(height: 22),

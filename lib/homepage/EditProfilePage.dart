@@ -244,7 +244,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
   User? user = FirebaseAuth.instance.currentUser;
   late CollectionReference usersRef;
 
-  // Controllers
   final fullNameController = TextEditingController();
   final emailController = TextEditingController();
   final contactController = TextEditingController();
