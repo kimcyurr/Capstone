@@ -139,7 +139,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require("dotenv");
 
-// Load environment variables from .env in local development
+// Load .env locally (Render injects env vars automatically)
 if (process.env.NODE_ENV !== "production") {
   dotenv.config();
 }
@@ -153,30 +153,35 @@ app.use(cors({ origin: "*" }));
 app.use(express.json({ limit: "10mb" }));
 
 // ----------------------------
+// Routes
+// ----------------------------
+const readingHistoryRoutes = require("./routes/readingHistory");
+const likeRoutes = require("./routes/like");
+
+app.use("/api/reading-history", readingHistoryRoutes);
+app.use("/api/likes", likeRoutes);
+
+// ----------------------------
 // MongoDB connection
 // ----------------------------
 const mongoUri = process.env.MONGO_URI;
+console.log("Mongo URI:", mongoUri); // Debug: make sure it's set
 
 if (!mongoUri) {
-  console.error(
-    "❌ MONGO_URI is not defined! Set it in .env (for local) or Render environment variables."
-  );
-  process.exit(1); // Stop server if URI is missing
+  console.warn("⚠️ MONGO_URI is not defined! The server may not connect to MongoDB.");
+} else {
+  mongoose
+    .connect(mongoUri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    })
+    .then(() => console.log("✅ MongoDB Connected"))
+    .catch((err) => console.error("❌ MongoDB Error:", err));
 }
 
-mongoose
-  .connect(mongoUri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("✅ MongoDB Connected"))
-  .catch((err) => console.error("❌ MongoDB Connection Error:", err));
-
 // ----------------------------
-// Schemas
-// ----------------------------
-
 // Feature Schema
+// ----------------------------
 const FeatureSchema = new mongoose.Schema(
   {
     title: String,
@@ -193,17 +198,6 @@ const FeatureSchema = new mongoose.Schema(
 );
 
 const Feature = mongoose.model("Feature", FeatureSchema);
-
-// Likes Schema
-const LikeSchema = new mongoose.Schema(
-  {
-    userId: { type: String, required: true },
-    moduleId: { type: String, required: true },
-  },
-  { timestamps: true }
-);
-
-const Like = mongoose.model("Like", LikeSchema);
 
 // ----------------------------
 // Test Route
@@ -268,68 +262,11 @@ app.delete("/api/feature/delete/:id", async (req, res) => {
 });
 
 // ----------------------------
-// Likes Routes
-// ----------------------------
-
-// Like a module
-app.post("/api/likes/like", async (req, res) => {
-  try {
-    const { userId, moduleId } = req.body;
-    if (!userId || !moduleId) return res.status(400).json({ error: "Missing userId or moduleId" });
-
-    const existing = await Like.findOne({ userId, moduleId });
-    if (existing) return res.status(400).json({ error: "Already liked" });
-
-    const like = new Like({ userId, moduleId });
-    await like.save();
-    res.status(200).json({ message: "Liked successfully" });
-  } catch (err) {
-    res.status(500).json({ error: "Server error" });
-  }
-});
-
-// Unlike a module
-app.post("/api/likes/unlike", async (req, res) => {
-  try {
-    const { userId, moduleId } = req.body;
-    if (!userId || !moduleId) return res.status(400).json({ error: "Missing userId or moduleId" });
-
-    await Like.deleteOne({ userId, moduleId });
-    res.status(200).json({ message: "Unliked successfully" });
-  } catch (err) {
-    res.status(500).json({ error: "Server error" });
-  }
-});
-
-// Get total likes for a module
-app.get("/api/likes/count/:moduleId", async (req, res) => {
-  try {
-    const { moduleId } = req.params;
-    const count = await Like.countDocuments({ moduleId });
-    res.status(200).json({ likes: count });
-  } catch (err) {
-    res.status(500).json({ error: "Server error" });
-  }
-});
-
-// Check if a user liked a module
-app.get("/api/likes/check/:userId/:moduleId", async (req, res) => {
-  try {
-    const { userId, moduleId } = req.params;
-    const liked = await Like.exists({ userId, moduleId });
-    res.status(200).json({ liked: !!liked });
-  } catch (err) {
-    res.status(500).json({ error: "Server error" });
-  }
-});
-
-// ----------------------------
 // Start Server
 // ----------------------------
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
-
 
 
