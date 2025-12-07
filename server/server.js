@@ -156,7 +156,7 @@ app.use(express.json({ limit: "10mb" }));
 // Routes
 // ----------------------------
 const readingHistoryRoutes = require("./routes/readingHistory");
-const likeRoutes = require("./routes/like");
+const likeRoutes = require("./routes/likes");
 
 app.use("/api/reading-history", readingHistoryRoutes);
 app.use("/api/likes", likeRoutes);

@@ -683,8 +683,8 @@ class _LearningPageState extends State<LearningPage> {
   late Future<List<dynamic>> featuresFuture;
   List<dynamic> allFeatures = [];
   List<dynamic> filteredFeatures = [];
-  Map<String, bool> likedMap = {}; // featureId -> liked
-  Map<String, int> likeCountMap = {}; // featureId -> total likes
+  Map<String, bool> likedMap = {};
+  Map<String, int> likeCountMap = {};
   String selectedCategory = "All";
   String searchQuery = "";
 
@@ -708,7 +708,6 @@ class _LearningPageState extends State<LearningPage> {
         allFeatures = data;
         filteredFeatures = List.from(allFeatures);
 
-        // Fetch likes for each feature
         for (var feature in data) {
           await fetchLikes(feature["_id"]);
         }
@@ -749,9 +748,10 @@ class _LearningPageState extends State<LearningPage> {
     }
   }
 
-  // ❤️ LIKE feature toggle
+  // ❤️ LIKE / UNLIKE
   Future<void> toggleLike(String featureId) async {
     if (currentUser == null) return;
+
     bool currentlyLiked = likedMap[featureId] ?? false;
 
     final uri = Uri.parse(
@@ -762,14 +762,13 @@ class _LearningPageState extends State<LearningPage> {
       final response = await http.post(
         uri,
         headers: {"Content-Type": "application/json"},
-        body: jsonEncode({"userId": currentUser!.uid, "moduleId": featureId}),
+        body: jsonEncode({"userId": currentUser!.uid, "featureId": featureId}),
       );
 
       if (response.statusCode == 200) {
-        // Update liked state
         likedMap[featureId] = !currentlyLiked;
 
-        // Fetch the updated total like count from server
+        // Get new like count
         final countUri = Uri.parse("$backendBase/api/likes/count/$featureId");
         final countResp = await http.get(countUri);
         if (countResp.statusCode == 200) {
@@ -784,22 +783,21 @@ class _LearningPageState extends State<LearningPage> {
     }
   }
 
-  // Fetch initial likes for a feature
+  // Fetch initial like state + count
   Future<void> fetchLikes(String featureId) async {
     if (currentUser == null) return;
 
     try {
-      // Check if user liked
       final checkUri = Uri.parse(
-        "$backendBase/api/likes/check/${currentUser!.uid}/$featureId",
+        "$backendBase/api/likes/status/${currentUser!.uid}/$featureId",
       );
+
       final checkResp = await http.get(checkUri);
       if (checkResp.statusCode == 200) {
         final likedData = jsonDecode(checkResp.body);
         likedMap[featureId] = likedData["liked"] ?? false;
       }
 
-      // Get total likes
       final countUri = Uri.parse("$backendBase/api/likes/count/$featureId");
       final countResp = await http.get(countUri);
       if (countResp.statusCode == 200) {
@@ -813,16 +811,14 @@ class _LearningPageState extends State<LearningPage> {
     }
   }
 
-  // ⬇ SAVE MODULE OFFLINE
+  // Download module
   Future<void> saveModuleOffline(dynamic feature) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-
       List<String> savedModules =
           prefs.getStringList("downloadedModules") ?? [];
 
       savedModules.add(jsonEncode(feature));
-
       await prefs.setStringList("downloadedModules", savedModules);
     } catch (e) {
       print("❌ Error saving module: $e");
@@ -836,7 +832,7 @@ class _LearningPageState extends State<LearningPage> {
 
     return GestureDetector(
       onTap: () async {
-        await addReadingHistory(feature["_id"]);
+        await addReadingHistory(featureId);
         if (!mounted) return;
         Navigator.push(
           context,
@@ -888,7 +884,7 @@ class _LearningPageState extends State<LearningPage> {
                     style: TextStyle(color: Colors.grey.shade700, fontSize: 14),
                   ),
                   const SizedBox(height: 10),
-                  // ❤️ LIKE + ⬇ DOWNLOAD BUTTONS
+
                   Row(
                     children: [
                       IconButton(
@@ -998,32 +994,6 @@ class _LearningPageState extends State<LearningPage> {
             ),
           ),
           const SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      selectedCategory = "All";
-                    });
-                    filterFeatures();
-                  },
-                  child: Text(
-                    "All",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: selectedCategory == "All"
-                          ? const Color(0xFF1A6E34)
-                          : Colors.grey.shade600,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 10),
           Expanded(
             child: FutureBuilder<List<dynamic>>(
               future: featuresFuture,
